@@ -1,0 +1,83 @@
+<!--
+  Real-robot navigation tree with event-driven global replanning. Unlike
+  Nav2's default recovery tree, it deliberately has no Spin recovery:
+  in-place path alignment remains the controller's responsibility, while a
+  failed navigation cannot accumulate uncontrolled recovery rotations.
+-->
+<root main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <RecoveryNode number_of_retries="6" name="NavigateRecovery">
+      <TerrainValidationGuard unavailable="{terrain_validation_unavailable}" wait_timeout_ms="12000">
+      <PipelineSequence name="NavigateWithReplanning">
+        <!--
+          旧设置：
+          <DistanceController distance="0.75">
+          它每走0.75m就替换一次FollowPath路径，即使原路径仍然安全，也会重置
+          Rotation Shim/MPPI。现在只在新目标、连续3次三维路径失效或控制器失败
+          时计算新路径；正常跟踪期间黑板中的path保持不变。
+        -->
+        <RateController hz="2.0">
+          <RecoveryNode number_of_retries="1" name="ComputePathToPose">
+            <Fallback name="ReplanOnlyOnTerrainEvent">
+              <ReactiveSequence name="KeepValidPath">
+                <IsTerrainPathValid
+                  path="{path}"
+                  service_name="/terrain/is_path_valid_reference"
+                  server_timeout="1000"
+                  required_invalid_checks="3"
+                  unavailable="{terrain_validation_unavailable}"
+                  failure_reason="{terrain_validation_reason}"/>
+                <Inverter><GlobalUpdatedGoal/></Inverter>
+              </ReactiveSequence>
+              <Sequence name="ReplanWithAvailableInputs">
+                <TerrainReplanAllowed unavailable="{terrain_validation_unavailable}"/>
+                <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+              </Sequence>
+            </Fallback>
+            <Sequence name="RecoverWithAvailableInputs">
+              <TerrainReplanAllowed unavailable="{terrain_validation_unavailable}"/>
+            <ClearEntireCostmap
+              name="ClearGlobalCostmap-Context"
+              service_name="global_costmap/clear_entirely_global_costmap"/>
+            </Sequence>
+          </RecoveryNode>
+        </RateController>
+        <RecoveryNode number_of_retries="1" name="FollowPath">
+          <FollowPath path="{path}" controller_id="FollowPath"/>
+          <!--
+            旧恢复会在末端控制失败后立刻后退，再从目标后方重新跟踪，
+            容易形成“越过目标—掉头—后退—再掉头”的物理循环：
+            <BackUp backup_dist="0.30" backup_speed="0.05"/>
+            现在这里只清除局部动态代价并重试一次，不自动移动车体。
+          -->
+          <Sequence name="ControllerRecovery">
+            <ClearEntireCostmap
+              name="ClearLocalCostmap-Context"
+              service_name="local_costmap/clear_entirely_local_costmap"/>
+            <RecoveryNode number_of_retries="1" name="RecomputeAfterControllerFailure">
+              <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+              <ClearEntireCostmap
+                name="ClearGlobalCostmap-ControllerFailure"
+                service_name="global_costmap/clear_entirely_global_costmap"/>
+            </RecoveryNode>
+          </Sequence>
+        </RecoveryNode>
+      </PipelineSequence>
+      </TerrainValidationGuard>
+      <ReactiveFallback name="RecoveryFallback">
+        <GoalUpdated/>
+        <RoundRobin name="RecoveryActions">
+          <Sequence name="ClearingActions">
+            <ClearEntireCostmap
+              name="ClearLocalCostmap-Subtree"
+              service_name="local_costmap/clear_entirely_local_costmap"/>
+            <ClearEntireCostmap
+              name="ClearGlobalCostmap-Subtree"
+              service_name="global_costmap/clear_entirely_global_costmap"/>
+          </Sequence>
+          <Wait wait_duration="5"/>
+        </RoundRobin>
+      </ReactiveFallback>
+    </RecoveryNode>
+  </BehaviorTree>
+</root>

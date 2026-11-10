@@ -1,0 +1,32 @@
+{
+  "repository": "https://github.com/unitreerobotics/unitree_ros2",
+  "commit": "668d1ec5a05d1c38d3306bdca7d59f2ba3581a88",
+  "directory": "cyclonedds_ws/src/unitree/unitree_go/",
+  "license_source": "LICENSE",
+  "messages": {
+    "msg/AudioData.msg": "c875fbedf1b48aa990cbdf061cf2fe406a91152966e155df488d0eb6bbcba9f9",
+    "msg/BmsCmd.msg": "59861adb50b81c76bd1c792e6db604a0cf67e46f781a957bbe422d40e3e60415",
+    "msg/BmsState.msg": "0f7ad8e09f8fd02999da9aa222ab0ecb848d9f70136af78a5ec7a10631959828",
+    "msg/Error.msg": "dcb46b69ed65270bb96c729ad94743b9557d166c048efc5c273eed9cedfa7139",
+    "msg/Go2FrontVideoData.msg": "86078978dd1f90357a6ff41e16f28eb16ccedb15a7302b17d5f5738128fddddf",
+    "msg/HeightMap.msg": "e7b732d004e8a482a19ca231ea85095aa3902584a7dc0a849d1cc6fd210ebfdd",
+    "msg/IMUState.msg": "95b5b2aa84fbbea748a560f18cc3950a6091c5822aa1dba326aa183327cb8198",
+    "msg/InterfaceConfig.msg": "03004edb03d062c83309cf233d2135570538b15c1bf837cbf4f1d515766f3695",
+    "msg/LidarState.msg": "cb3dac931714cabba31604f73d1c69eeaf5ae3d1a2d06bac71d68c54d2d6d5e3",
+    "msg/LowCmd.msg": "5254dae41aaee1c32d879affa5b5393e35303f405e68d65e39fd9606497659ee",
+    "msg/LowState.msg": "927537585595e44ab6753741c78410f43c0fe190f3f2f47825fdb57793ed19e5",
+    "msg/MotorCmd.msg": "067edd164076ca83f13b251a152ac4fe15cdec501a08f845a1ca4f0829dd90b1",
+    "msg/MotorCmds.msg": "85679ea65fae74079c6e094674f600f9f33dabeb4410be51730cc2ee6e6e42cb",
+    "msg/MotorState.msg": "e4c7440b1f096b723e48c626c21ef6b77d828d19af0ce5bd90e28a80590014a0",
+    "msg/MotorStates.msg": "aeb5cf4202e80f24b67bdc7480f745f9bcb3cf17b639bc97b43193827cb8b22f",
+    "msg/PathPoint.msg": "f669eeecb1e279267cef687e2b9485a520e7c7a841a8e1f337611304606e457c",
+    "msg/Req.msg": "b356c1bb1e19aa07f6d7fcf38d5e5ea1888f64ecd9f5f28566e71d4aa97e01f9",
+    "msg/Res.msg": "07d84bf89cc9680b066a21f4d0c40833a94b8401cb8ff6df783cd445c88edeef",
+    "msg/SportModeCmd.msg": "21dc358a1d4cf1f4660c9327c2feb9a85ba67139099b1c506d6a4566dc83b2d0",
+    "msg/SportModeState.msg": "4034e8c6805e002c5ad2327912f52219c712853a51a518378acb1d22764d122c",
+    "msg/TimeSpec.msg": "1bab331c842af6a6847f471cf2aad56ad38139c901b9df436470e7b42f86369f",
+    "msg/UwbState.msg": "8813add9680f3c448c4e35d62a49058709f992024867529754d3cd774fd9686b",
+    "msg/UwbSwitch.msg": "4aa32edaaa274891d5997de5355e000a0dcdd51d7c0702f7b25bbde0b7492dc4",
+    "msg/WirelessController.msg": "ce175fee57fa89c6edfd0d57e8395e5b75788b62ad6d19a393dc68e0f2fddd6d"
+  }
+}

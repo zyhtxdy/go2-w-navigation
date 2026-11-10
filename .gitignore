@@ -1,0 +1,62 @@
+# colcon outputs: keep local builds, do not publish them.
+/build/
+/install/
+/log/
+
+# Field recordings and site-specific maps stay on this machine.
+/bags/
+/maps/
+/validation/
+/tmp/
+
+# Local editor, Python and test caches.
+/.vscode/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+htmlcov/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Generated binaries and recordings; small source test fixtures remain tracked.
+*.o
+*.a
+*.so
+*.so.*
+*.mcap
+*.db3
+*.db3-shm
+*.db3-wal
+*.pcap
+*.pcapng
+*.log
+core
+core.[0-9]*
+
+# FAST-LIO runtime output. Keep its upstream analysis helpers.
+/src/FAST_LIO_ROS2/PCD/
+/src/FAST_LIO_ROS2/Log/*.txt
+/src/FAST_LIO_ROS2/Log/*.csv
+/src/FAST_LIO_ROS2/Log/*.png
+/src/FAST_LIO_ROS2/Log/*.pdf
+
+# Historical reports are kept; raw results and one-off scripts are archived.
+/docs/validation/**
+!/docs/validation/**/
+!/docs/validation/**/*.md
+!/docs/validation/COLCON_IGNORE
+# Provenance for config/replay_planning_cases_lab_v1.yaml.
+!/docs/validation/2026-10-21-latest-navigation-failures/laptop_rviz2_21356_1792565758712.log
+
+# Optional local credentials/configuration should not enter source control.
+.env
+.env.*
+!.env.example
+*.pem
+*.key

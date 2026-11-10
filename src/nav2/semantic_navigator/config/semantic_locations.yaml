@@ -1,0 +1,19 @@
+semantic_map:
+  # 长期语义地图必须位于稳定的map坐标系。以下坐标只是格式示例，
+  # 默认禁用；请测量真实位置并设置enabled: true。
+  frame_id: map
+  locations:
+    - id: meeting_room
+      enabled: false
+      names: [会议室, 小会议室, meeting room]
+      description: 会议室入口外的可停靠区域
+      poses:
+        - {x: 0.0, y: 0.0, z: 0.0, yaw: 0.0}
+        - {x: 0.4, y: 0.0, z: 0.0, yaw: 3.141593}
+
+    - id: charging_station
+      enabled: false
+      names: [充电桩, 充电站, charging station]
+      description: 充电桩前方停靠区域
+      poses:
+        - {x: 0.0, y: 0.0, z: 0.0, yaw: 0.0}

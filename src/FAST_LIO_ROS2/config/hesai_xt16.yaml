@@ -1,0 +1,52 @@
+# 禾赛 SDK 配置，不是 ROS 参数 YAML。IP/端口必须按实际设备核对。
+# calibration/ 中为官方 SDK 的 XT16 示例；优先替换为本机序列号对应文件。
+# 相对路径由 mapping.launch.py 按此 YAML 所在目录解析。
+lidar:
+  - driver:
+      use_gpu: false
+      source_type: 1
+      lidar_udp_type:
+        device_ip_address: "192.168.123.20" # 2026-10-08 NX 抓包确认的 UDP 发送地址。
+        udp_port: 2368
+        ptc_port: 9347
+        multicast_ip_address: ""
+        use_ptc_connected: false # 使用本地校准文件，无需 PTC 拉取。
+        host_ptc_port: 0
+        correction_file_path: "calibration/xt16_angles.csv"
+        firetimes_path: "calibration/xt16_firetimes.csv"
+        recv_point_cloud_timeout: -1
+        ptc_connect_timeout: 5
+        host_ip_address: "" # 默认监听所有网卡。
+        fault_message_port: 0
+        standby_mode: -1
+        speed: -1 # 不修改雷达转速。
+        ptc_mode: 0
+      # 2026-10-09 NX 静止检查：设备时间停在 2020 年，与本体桥接收时间不同钟。
+      # 初期使用 NX 的 UDP 接收时间；SDK 同时生成帧头和逐点时间，不只改 header。
+      # 这是接收时间近似，包含传输延迟；不是硬件采样同步或已标定的时间偏移。
+      use_timestamp_type: 1
+      frame_start_azimuth: 0
+      thread_num: 2
+      transform_flag: false # 点云保持雷达坐标，外参由 FAST-LIO 应用。
+      fov_start: -1
+      fov_end: -1
+      channel_fov_filter_path: ""
+      multi_fov_filter_ranges: ""
+      enable_packet_loss_tool: true
+      distance_correction_flag: false
+      xt_spot_correction: false
+      device_udp_src_port: 0
+      device_fault_port: 0
+      frame_frequency: 0
+      default_frame_frequency: 10.0
+      echo_mode_filter: 0
+    ros:
+      ros_frame_id: hesai_lidar
+      ros_recv_packet_topic: /hesai/packets
+      ros_send_packet_topic: /hesai/packets
+      ros_send_point_cloud_topic: /hesai/points
+      ros_send_imu_topic: /hesai/imu
+      ros_send_packet_loss_topic: /hesai/packet_loss
+      send_packet_ros: false
+      send_point_cloud_ros: true
+      send_imu_ros: false # 不假设 XT16 为 FAST-LIO 提供 IMU。

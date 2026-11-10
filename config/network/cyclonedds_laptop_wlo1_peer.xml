@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CycloneDDS>
+  <Domain Id="any">
+    <General>
+      <!-- This file is for the laptop, not the NX container. -->
+      <Interfaces>
+        <NetworkInterface name="wlo1"/>
+      </Interfaces>
+      <!-- Discovery may use multicast; user data must cross the routed link
+           by unicast rather than stay on the NX robot LAN multicast group. -->
+      <AllowMulticast>spdp</AllowMulticast>
+    </General>
+    <Discovery>
+      <!-- The laptop must have a route to the NX robot-LAN address. -->
+      <Peers>
+        <Peer Address="192.168.123.18"/>
+      </Peers>
+      <ParticipantIndex>auto</ParticipantIndex>
+    </Discovery>
+  </Domain>
+</CycloneDDS>

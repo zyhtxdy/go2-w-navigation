@@ -1,0 +1,9 @@
+<library path="astar_3d_planner">
+  <class
+    type="astar_3d_planner::AlwaysCurrentLayer"
+    base_class_type="nav2_costmap_2d::Layer">
+    <description>
+      No-op global costmap layer that remains current for the point-cloud 3D A* planner.
+    </description>
+  </class>
+</library>

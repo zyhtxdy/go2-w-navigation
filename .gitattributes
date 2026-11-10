@@ -1,0 +1,8 @@
+* text=auto
+*.png binary
+*.jpg binary
+*.gif binary
+*.pdf binary
+*.pcd binary
+*.mcap binary
+*.db3 binary

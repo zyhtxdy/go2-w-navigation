@@ -1,0 +1,87 @@
+{
+  "format_version": 1,
+  "frame_id": "map",
+  "units": "metres",
+  "database_signature": {
+    "map.pcd": "0ee7d3bf62dd393971bc4fdc36b515ec14fde4a1ed3a044633d7a4ff71000d0c",
+    "manifest.csv": "7ee2ab5a20d6297ef64d1cefe23fa62450a31c6a992f41ce5e32cbb91f5fb511"
+  },
+  "files": {
+    "support.csv": {
+      "sha256": "d20fdd5428b224261b88e5b95caddde7385ee34c4fc336a595d491ea46e03f42",
+      "points": 1300
+    },
+    "obstacles.csv": {
+      "sha256": "739f00150acc6955419bee354e239f101cabd21bf24702483e0ec33333f9d4d9",
+      "points": 1089
+    }
+  },
+  "diagnostic_files": {
+    "hazard_sources.csv": {
+      "sha256": "76fc972d3351b87deec113a415949826b85d43dd08f2df04e905e78c4951ce9f"
+    },
+    "terrain_tiles.csv": {
+      "sha256": "7c6dc0044c9231da07b2fd57ed766f481760107456149511bbe96bbd580fc99e"
+    },
+    "terrain_cells.csv": {
+      "sha256": "6fb08e528784942792e7e1348511c8b42af2469ae04ff8f38dabcd8f01333d7d"
+    }
+  },
+  "hazard_sources": {
+    "measured": 618,
+    "synthetic": 471
+  },
+  "tile_diagnostics_scope": "Cell counts include overlapping fitting halos; owned export counts are disjoint",
+  "terrain_parameters": {
+    "cloud_topic": "/cloud_registered_body",
+    "odometry_topic": "/Odometry",
+    "terrain_topic": "/terrain/map",
+    "support_topic": "/terrain/support",
+    "obstacle_topic": "/terrain/obstacles",
+    "global_obstacle_topic": "/terrain/obstacles_global",
+    "measured_global_obstacle_topic": "/terrain/obstacles_measured_global",
+    "non_traversable_topic": "/terrain/non_traversable_global",
+    "clearing_scan_topic": "/terrain/clear_scan",
+    "odom_frame": "odom",
+    "body_frame": "body",
+    "base_frame": "base_link",
+    "history_decay_time": 2.0,
+    "processing_interval": 0.2,
+    "maximum_pose_age": 0.2,
+    "pose_wait_timeout": 0.1,
+    "pose_history_duration": 2.0,
+    "input_minimum_range": 0.4,
+    "input_maximum_range": 8.0,
+    "input_minimum_relative_z": -1.0,
+    "input_maximum_relative_z": 2.0,
+    "input_voxel_size": 0.1,
+    "grid_resolution": 0.2,
+    "grid_radius": 5.0,
+    "fit_radius_cells": 2,
+    "minimum_fit_cells": 3,
+    "minimum_support_points": 5,
+    "ground_height_percentile": 0.2,
+    "positive_outlier_tolerance": 0.1,
+    "maximum_plane_rmse": 0.08,
+    "maximum_slope_degrees": 10.0,
+    "maximum_step_height": 0.08,
+    "obstacle_minimum_height": 0.15,
+    "obstacle_maximum_height": 1.8,
+    "minimum_obstacle_cluster_points": 3,
+    "obstacle_cluster_radius_cells": 1,
+    "synthetic_obstacle_clearance_radius": 0.65,
+    "global_hazard_voxel_size": 0.2,
+    "global_measured_enter_observations": 2,
+    "global_synthetic_enter_observations": 3,
+    "global_exit_missed_observations": 3,
+    "scan_angle_increment_degrees": 0.5,
+    "scan_range_minimum": 0.4,
+    "scan_range_maximum": 8.0,
+    "publish_terrain_map": true,
+    "terrain_publish_interval": 0.5
+  },
+  "synthetic_obstacle_clearance_radius_used": 0.0,
+  "sparse_ground_layer_recovery_used": true,
+  "height_reference": "Unmodified database map coordinates",
+  "coverage": "Observed supported cells only; gaps are not filled"
+}

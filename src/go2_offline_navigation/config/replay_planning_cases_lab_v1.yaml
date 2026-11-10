@@ -1,0 +1,66 @@
+schema_version: 1
+frame_id: map
+expected_map_id: 4003d94bb6f81f004c4b1354dcb5044d84b8efe59e79993f6e6c5ed63390e080
+checkpoints_s: [10.0, 30.0, 50.0]
+source:
+  path: docs/validation/2026-10-21-latest-navigation-failures/laptop_rviz2_21356_1792565758712.log
+  description: >-
+    Six original RViz map-frame goals, fixed before running this replay evaluation.
+    Coordinates and yaw are copied from the cited historical log lines.
+  limitations:
+    - This is not a full replay of the historical navigation failures; their dynamic obstacle windows were not recorded.
+    - Goal z=0 preserves the original unspecified-ground-height convention; it does not assert that the floor is at map z=0.
+    - Do not snap original goals to observed support or replace them with successful projected endpoints before querying.
+    - Record localization readiness, raw start, projected start and final goal offset independently; map coverage does not prove traversability.
+    - Negative controls are reported separately and are excluded from the main navigation success rate.
+goals:
+  - id: G1
+    category: navigation
+    x: 1.45606
+    y: -0.703491
+    z: 0.0
+    yaw: -0.786121
+    source_line: 5
+  - id: G2
+    category: navigation
+    x: 4.51077
+    y: -0.388963
+    z: 0.0
+    yaw: -0.0556408
+    source_line: 6
+  - id: G3
+    category: navigation
+    x: 3.14239
+    y: -0.298739
+    z: 0.0
+    yaw: 3.09361
+    source_line: 10
+  - id: G4
+    category: navigation
+    x: 2.99253
+    y: -0.378234
+    z: 0.0
+    yaw: -0.0811787
+    source_line: 15
+  - id: G5
+    category: navigation
+    x: 2.51109
+    y: -0.659728
+    z: 0.0
+    yaw: -1.56758
+    source_line: 17
+  - id: G6
+    category: navigation
+    x: 4.8311
+    y: 0.514683
+    z: 0.0
+    yaw: 1.52947
+    source_line: 27
+  - id: NEG_OUTSIDE
+    category: negative_control
+    x: -20.0
+    y: -20.0
+    z: 0.0
+    yaw: 0.0
+    source_line: null
+    description: Deliberately outside observed support coverage; expect rejection, not a navigable goal.

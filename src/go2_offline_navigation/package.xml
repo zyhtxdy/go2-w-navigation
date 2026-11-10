@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>go2_offline_navigation</name><version>0.1.0</version>
+  <description>Independent known-map navigation entry with live terrain and localization gating.</description>
+  <maintainer email="zyh@todo.todo">zyh</maintainer><license>BSD-3-Clause</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <depend>rclcpp</depend><depend>libpcl-all-dev</depend><depend>terrain_costmap</depend>
+  <exec_depend>rclpy</exec_depend><exec_depend>tf2_ros</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend><exec_depend>nav_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend><exec_depend>std_msgs</exec_depend>
+  <exec_depend>diagnostic_msgs</exec_depend><exec_depend>action_msgs</exec_depend>
+  <exec_depend>rosgraph_msgs</exec_depend><exec_depend>std_srvs</exec_depend><exec_depend>ros2bag</exec_depend>
+  <exec_depend>launch</exec_depend><exec_depend>launch_ros</exec_depend>
+  <exec_depend>ament_index_python</exec_depend><exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-yaml</exec_depend><exec_depend>nav2_common</exec_depend>
+  <exec_depend>fast_lio_nav2</exec_depend><exec_depend>go2_relocalization</exec_depend>
+  <exec_depend>navigation_bringup</exec_depend><exec_depend>go2_cmd_vel_bridge</exec_depend>
+  <exec_depend>nav2_planner</exec_depend><exec_depend>nav2_lifecycle_manager</exec_depend>
+  <exec_depend>nav2_msgs</exec_depend>
+  <exec_depend>terrain_navigation_interfaces</exec_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
+  <test_depend>nav2_planner</test_depend><test_depend>lifecycle_msgs</test_depend>
+  <test_depend>nav2_msgs</test_depend><test_depend>tf2_msgs</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

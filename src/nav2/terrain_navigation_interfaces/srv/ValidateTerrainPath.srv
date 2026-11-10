@@ -1,0 +1,16 @@
+nav_msgs/Path path
+---
+uint8 VALID=0
+uint8 COLLISION=1
+uint8 TERRAIN_INVALID=2
+uint8 PATH_MISMATCH=3
+uint8 INVALID_REQUEST=4
+uint8 LOCALIZATION_UNAVAILABLE=10
+uint8 OBSTACLES_UNAVAILABLE=11
+uint8 TF_UNAVAILABLE=12
+uint8 MAP_UNAVAILABLE=13
+uint8 INTERNAL_ERROR=14
+bool is_valid
+uint8 status
+string reason
+int32[] invalid_pose_indices

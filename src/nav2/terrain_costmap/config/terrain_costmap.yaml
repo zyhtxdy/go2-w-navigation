@@ -1,0 +1,64 @@
+terrain_costmap:
+  ros__parameters:
+    cloud_topic: /cloud_registered_body
+    odometry_topic: /Odometry
+    terrain_topic: /terrain/map
+    support_topic: /terrain/support
+    obstacle_topic: /terrain/obstacles
+    # 兼容现有3D A*：该话题现在包含经过多帧确认/短时保持的全局危险点。
+    global_obstacle_topic: /terrain/obstacles_global
+    # 离线全局规划使用以下实测障碍快照；地形危险分类单独用于诊断。
+    measured_global_obstacle_topic: /terrain/obstacles_measured_global
+    non_traversable_topic: /terrain/non_traversable_global
+    clearing_scan_topic: /terrain/clear_scan
+    odom_frame: odom
+    body_frame: body
+    base_frame: base_link
+    history_decay_time: 2.0
+    # 地面拟合仍积累2秒；实测全局障碍按原始雷达帧时间保留0.6秒。
+    # 这是待真机验证的初始值，不代表无遮挡/可通行证明；local障碍保留原逻辑。
+    measured_obstacle_decay_time: 0.60
+    processing_interval: 0.20
+    maximum_pose_age: 0.20
+    # 点云先到、位姿稍后到时，最多等待100ms墙钟时间；不放宽上面的时间差限制。
+    # 里程计回调独立运行，等待期间不持有位姿锁。设为0可恢复立即拒绝的行为。
+    pose_wait_timeout: 0.10
+    # 按点云时间戳在该时长的FAST-LIO位姿队列中查找并插值。
+    pose_history_duration: 2.0
+    input_minimum_range: 0.40
+    input_maximum_range: 8.0
+    input_minimum_relative_z: -1.0
+    input_maximum_relative_z: 2.0
+    input_voxel_size: 0.10
+    grid_resolution: 0.20
+    grid_radius: 5.0
+    fit_radius_cells: 2
+    minimum_fit_cells: 3
+    minimum_support_points: 5
+    # 每格采用较低分位高度而非绝对最低点，抑制单个负向异常回波。
+    ground_height_percentile: 0.20
+    positive_outlier_tolerance: 0.10
+    maximum_plane_rmse: 0.08
+    # Go2W 初始轮式平地限制，和导航规划器一致；非实测越障能力。
+    maximum_slope_degrees: 10.0
+    maximum_step_height: 0.08
+    obstacle_minimum_height: 0.15
+    obstacle_maximum_height: 1.80
+    # 真实障碍至少形成一个小邻域簇；单个离群点不会进入障碍话题。
+    minimum_obstacle_cluster_points: 3
+    obstacle_cluster_radius_cells: 1
+    # 机器人附近区域同时受雷达近距盲区和40cm地面拟合窗口影响。
+    # 只抑制该范围内由拟合生成的虚拟危险格；真实离地障碍仍会正常发布。
+    synthetic_obstacle_clearance_radius: 0.65
+    # mixed全局障碍的实测确认只累计不同的原始雷达帧。
+    # local costmap仍接收原2秒窗口内的完整即时危险分类。
+    global_hazard_voxel_size: 0.20
+    global_measured_enter_observations: 2
+    global_synthetic_enter_observations: 3
+    global_exit_missed_observations: 3
+    scan_angle_increment_degrees: 0.50
+    scan_range_minimum: 0.40
+    scan_range_maximum: 8.0
+    publish_terrain_map: true
+    # terrain/support/mixed危险的发布周期；measured_global随每次处理刷新。
+    terrain_publish_interval: 0.50

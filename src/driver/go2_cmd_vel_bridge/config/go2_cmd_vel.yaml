@@ -1,0 +1,28 @@
+# Wildcard matches both go2_cmd_vel_bridge and offline_cmd_vel_bridge.
+/**:
+  ros__parameters:
+    input_topic: /go2/nav/cmd_vel
+    request_topic: /api/sport/request
+    estop_topic: /go2/nav/estop
+    enabled: true
+    publish_rate: 20.0
+    command_timeout: 0.3
+    stop_repetitions: 3
+    # 默认开启正向补偿；real_nav2.launch.py 可用 forward_compensation:=false 关闭。
+    # 根据 2026-10-19 用户提供的指令/EKF 速度观察拟合，尚非外部测速标定。
+    # 这一组只作用于正向 vx；参数启动后只读。
+    forward_compensation_enabled: true
+    forward_compensation_gain: 1.111443
+    forward_compensation_offset: 0.059202
+    forward_compensation_blend_speed: 0.05
+    # 补偿增量最多推到实测过的原始指令 0.70；输入本就 >=0.70 时仍原样传递。
+    # 这不是桥接总限速，上游控制器/平滑器仍决定目标速度。
+    forward_compensation_max_command: 0.70
+    # 2026-10-28 Request/EKF 观察的角速度逆模型；按用户要求，负向取同一模型的相反数。
+    # 允许增减；max_speed 为完整模型范围，不是总限速。
+    # 0~0.05 平滑引入偏置，0.40~0.45 平滑退出，>=0.45 原样传递。
+    angular_compensation_enabled: true
+    angular_compensation_gain: 0.882380
+    angular_compensation_offset: 0.025898
+    angular_compensation_blend_speed: 0.05
+    angular_compensation_max_speed: 0.40

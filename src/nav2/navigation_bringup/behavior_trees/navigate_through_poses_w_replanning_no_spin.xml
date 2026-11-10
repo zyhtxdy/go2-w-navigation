@@ -1,0 +1,77 @@
+<!-- Multi-pose real-robot navigation tree with no Spin recovery. -->
+<root main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <RecoveryNode number_of_retries="6" name="NavigateRecovery">
+      <TerrainValidationGuard unavailable="{terrain_validation_unavailable}" wait_timeout_ms="12000">
+      <PipelineSequence name="NavigateWithReplanning">
+        <!--
+          旧设置：
+          <DistanceController distance="0.75">
+          现在只在目标列表更新、连续3次三维路径失效或控制器失败时重规划。
+        -->
+        <RateController hz="2.0">
+          <RecoveryNode number_of_retries="1" name="ComputePathThroughPoses">
+            <Fallback name="ReplanOnlyOnTerrainEvent">
+              <ReactiveSequence name="KeepValidPath">
+                <IsTerrainPathValid
+                  path="{path}"
+                  service_name="/terrain/is_path_valid_reference"
+                  server_timeout="1000"
+                  required_invalid_checks="3"
+                  unavailable="{terrain_validation_unavailable}"
+                  failure_reason="{terrain_validation_reason}"/>
+                <Inverter><GlobalUpdatedGoal/></Inverter>
+              </ReactiveSequence>
+              <ReactiveSequence name="ComputeRemainingGoals">
+                <TerrainReplanAllowed unavailable="{terrain_validation_unavailable}"/>
+                <RemovePassedGoals input_goals="{goals}" output_goals="{goals}" radius="0.7"/>
+                <ComputePathThroughPoses goals="{goals}" path="{path}" planner_id="GridBased"/>
+              </ReactiveSequence>
+            </Fallback>
+            <Sequence name="RecoverWithAvailableInputs">
+              <TerrainReplanAllowed unavailable="{terrain_validation_unavailable}"/>
+            <ClearEntireCostmap
+              name="ClearGlobalCostmap-Context"
+              service_name="global_costmap/clear_entirely_global_costmap"/>
+            </Sequence>
+          </RecoveryNode>
+        </RateController>
+        <RecoveryNode number_of_retries="1" name="FollowPath">
+          <FollowPath path="{path}" controller_id="FollowPath"/>
+          <!--
+            旧恢复：
+            <BackUp backup_dist="0.30" backup_speed="0.05"/>
+            控制失败后自动后退会在目标附近制造反复掉头；现在只清图并重试。
+          -->
+          <Sequence name="ControllerRecovery">
+            <ClearEntireCostmap
+              name="ClearLocalCostmap-Context"
+              service_name="local_costmap/clear_entirely_local_costmap"/>
+            <RemovePassedGoals input_goals="{goals}" output_goals="{goals}" radius="0.7"/>
+            <RecoveryNode number_of_retries="1" name="RecomputeAfterControllerFailure">
+              <ComputePathThroughPoses goals="{goals}" path="{path}" planner_id="GridBased"/>
+              <ClearEntireCostmap
+                name="ClearGlobalCostmap-ControllerFailure"
+                service_name="global_costmap/clear_entirely_global_costmap"/>
+            </RecoveryNode>
+          </Sequence>
+        </RecoveryNode>
+      </PipelineSequence>
+      </TerrainValidationGuard>
+      <ReactiveFallback name="RecoveryFallback">
+        <GoalUpdated/>
+        <RoundRobin name="RecoveryActions">
+          <Sequence name="ClearingActions">
+            <ClearEntireCostmap
+              name="ClearLocalCostmap-Subtree"
+              service_name="local_costmap/clear_entirely_local_costmap"/>
+            <ClearEntireCostmap
+              name="ClearGlobalCostmap-Subtree"
+              service_name="global_costmap/clear_entirely_global_costmap"/>
+          </Sequence>
+          <Wait wait_duration="5"/>
+        </RoundRobin>
+      </ReactiveFallback>
+    </RecoveryNode>
+  </BehaviorTree>
+</root>

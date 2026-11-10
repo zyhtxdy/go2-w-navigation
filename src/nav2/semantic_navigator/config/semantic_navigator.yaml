@@ -1,0 +1,13 @@
+semantic_navigator:
+  ros__parameters:
+    command_topic: /semantic_navigation/command
+    status_topic: /semantic_navigation/status
+    selected_goal_topic: /semantic_navigation/selected_goal
+    marker_topic: /semantic_navigation/markers
+    navigate_to_pose_action: /navigate_to_pose
+    base_frame: base_link
+    fuzzy_threshold: 0.62
+    action_server_timeout: 1.0
+    retry_alternate_poses: true
+    # 修改语义地图文件后自动重载，无需重启节点。
+    reload_interval: 2.0

@@ -1,0 +1,10 @@
+<library path="astar_3d_planner">
+  <class
+    name="astar_3d_planner/Astar3DPlanner"
+    type="astar_3d_planner::Astar3DPlanner"
+    base_class_type="nav2_core::GlobalPlanner">
+    <description>
+      Sparse-voxel 3D A* planner with downward ground-support and body-clearance checks.
+    </description>
+  </class>
+</library>

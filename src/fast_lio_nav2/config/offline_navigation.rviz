@@ -1,0 +1,341 @@
+# Offline map clouds retain late-joiner data; known map is colored by height.
+Panels:
+- Class: rviz_common/Displays
+  Help Height: 78
+  Name: Displays
+  Property Tree Widget:
+    Expanded:
+    - /Global Options1
+    - /Status1
+    - /KnownMap1
+    - /OfflineSupport1
+    Splitter Ratio: 0.5
+  Tree Height: 549
+- Class: rviz_common/Tool Properties
+  Expanded:
+  - /Nav2 Goal1
+  Name: Tool Properties
+  Splitter Ratio: 0.5886790156364441
+- Class: rviz_common/Views
+  Expanded:
+  - /Current View1
+  Name: Views
+  Splitter Ratio: 0.5
+- Class: nav2_rviz_plugins/Navigation 2
+  Name: Navigation 2
+Visualization Manager:
+  Class: ''
+  Displays:
+  - Class: rviz_default_plugins/Grid
+    Name: Grid
+    Enabled: true
+    Value: true
+    Alpha: 0.3
+    Cell Size: 1
+    Color: 100; 100; 105
+    Plane: XY
+    Plane Cell Count: 30
+    Normal Cell Count: 0
+    Reference Frame: <Fixed Frame>
+    Line Style:
+      Value: Lines
+      Line Width: 0.02
+    Offset:
+      X: 0
+      Y: 0
+      Z: 0
+  - Alpha: 0.65
+    Autocompute Intensity Bounds: true
+    Autocompute Value Bounds:
+      Min Value: -1
+      Max Value: 2
+      Value: true
+    Axis: Z
+    Channel Name: intensity
+    Class: rviz_default_plugins/PointCloud2
+    Color: 170; 170; 185
+    Color Transformer: AxisColor
+    Decay Time: 0
+    Enabled: true
+    Invert Rainbow: false
+    Max Color: 255; 255; 255
+    Max Intensity: 186
+    Min Color: 0; 0; 0
+    Min Intensity: 0
+    Name: KnownMap
+    Position Transformer: XYZ
+    Selectable: true
+    Size (Pixels): 3
+    Size (m): 0.025
+    Style: Flat Squares
+    Topic:
+      Depth: 1
+      Durability Policy: Transient Local
+      Filter size: 10
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Value: /relocalization/known_map
+    Use Fixed Frame: true
+    Use rainbow: true
+    Value: true
+  - Alpha: 1.0
+    Autocompute Intensity Bounds: true
+    Autocompute Value Bounds:
+      Max Value: 11.062739372253418
+      Min Value: -13.864188194274902
+      Value: true
+    Axis: Z
+    Channel Name: intensity
+    Class: rviz_default_plugins/PointCloud2
+    Color: 50; 255; 100
+    Color Transformer: FlatColor
+    Decay Time: 0
+    Enabled: true
+    Invert Rainbow: false
+    Max Color: 255; 255; 255
+    Max Intensity: 186
+    Min Color: 0; 0; 0
+    Min Intensity: 0
+    Name: OfflineSupport
+    Position Transformer: XYZ
+    Selectable: true
+    Size (Pixels): 3
+    Size (m): 0.065
+    Style: Flat Squares
+    Topic:
+      Depth: 1
+      Durability Policy: Transient Local
+      Filter size: 10
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Value: /offline_map/support
+    Use Fixed Frame: true
+    Use rainbow: true
+    Value: true
+  - Alpha: 1.0
+    Class: rviz_default_plugins/PointCloud2
+    Color: 100; 210; 255
+    Color Transformer: FlatColor
+    Decay Time: 0
+    Enabled: false
+    Name: PlannerSupportMap
+    Position Transformer: XYZ
+    Selectable: true
+    Size (Pixels): 3
+    Size (m): 0.055
+    Style: Flat Squares
+    Topic:
+      Depth: 1
+      Durability Policy: Transient Local
+      Filter size: 10
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Value: /planner/support_map
+    Use Fixed Frame: true
+    Value: false
+  - Alpha: 1.0
+    Autocompute Intensity Bounds: true
+    Autocompute Value Bounds:
+      Max Value: 11.062739372253418
+      Min Value: -13.864188194274902
+      Value: true
+    Axis: Z
+    Channel Name: intensity
+    Class: rviz_default_plugins/PointCloud2
+    Color: 255; 130; 40
+    Color Transformer: FlatColor
+    Decay Time: 0
+    Enabled: true
+    Invert Rainbow: false
+    Max Color: 255; 255; 255
+    Max Intensity: 186
+    Min Color: 0; 0; 0
+    Min Intensity: 0
+    Name: OfflineObstacles
+    Position Transformer: XYZ
+    Selectable: true
+    Size (Pixels): 3
+    Size (m): 0.09
+    Style: Flat Squares
+    Topic:
+      Depth: 1
+      Durability Policy: Transient Local
+      Filter size: 10
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Value: /offline_map/obstacles
+    Use Fixed Frame: true
+    Use rainbow: true
+    Value: true
+  - Alpha: 1.0
+    Autocompute Intensity Bounds: true
+    Autocompute Value Bounds:
+      Max Value: 11.062739372253418
+      Min Value: -13.864188194274902
+      Value: true
+    Axis: Z
+    Channel Name: intensity
+    Class: rviz_default_plugins/PointCloud2
+    Color: 0; 255; 255
+    Color Transformer: FlatColor
+    Decay Time: 0
+    Enabled: true
+    Invert Rainbow: false
+    Max Color: 255; 255; 255
+    Max Intensity: 186
+    Min Color: 0; 0; 0
+    Min Intensity: 0
+    Name: AlignedScan
+    Position Transformer: XYZ
+    Selectable: true
+    Size (Pixels): 3
+    Size (m): 0.04
+    Style: Flat Squares
+    Topic:
+      Depth: 1
+      Durability Policy: Volatile
+      Filter size: 10
+      History Policy: Keep Last
+      Reliability Policy: Best Effort
+      Value: /relocalization/aligned_cloud
+    Use Fixed Frame: true
+    Use rainbow: true
+    Value: true
+  - Angle Tolerance: 0.10000000149011612
+    Class: rviz_default_plugins/Odometry
+    Covariance:
+      Orientation:
+        Alpha: 0.5
+        Color: 255; 255; 127
+        Color Style: Unique
+        Frame: Local
+        Offset: 1
+        Scale: 1
+        Value: true
+      Position:
+        Alpha: 0.30000001192092896
+        Color: 204; 51; 204
+        Scale: 1
+        Value: true
+      Value: false
+    Enabled: true
+    Keep: 1
+    Name: RobotOdometry
+    Position Tolerance: 0.10000000149011612
+    Shape:
+      Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Color: 255; 25; 0
+      Head Length: 0.15
+      Head Radius: 0.05
+      Shaft Length: 0.35
+      Shaft Radius: 0.025
+      Value: Arrow
+    Topic:
+      Depth: 5
+      Durability Policy: Volatile
+      Filter size: 10
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Value: /odom
+    Value: true
+  - Alpha: 1
+    Buffer Length: 1
+    Class: rviz_default_plugins/Path
+    Color: 25; 255; 0
+    Enabled: true
+    Head Diameter: 0.30000001192092896
+    Head Length: 0.20000000298023224
+    Length: 0.30000001192092896
+    Line Style: Billboards
+    Line Width: 0.04
+    Name: GlobalPlan
+    Offset:
+      X: 0
+      Y: 0
+      Z: 0.05
+    Pose Color: 255; 85; 255
+    Pose Style: None
+    Radius: 0.029999999329447746
+    Shaft Diameter: 0.10000000149011612
+    Shaft Length: 0.10000000149011612
+    Topic:
+      Depth: 5
+      Durability Policy: Volatile
+      Filter size: 10
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Value: /plan
+    Value: true
+  - Class: rviz_default_plugins/MarkerArray
+    Enabled: true
+    Name: StartFailureDiagnostics
+    Topic:
+      Depth: 1
+      Durability Policy: Transient Local
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Value: /planner/start_failure_markers
+    Value: true
+  - Class: rviz_default_plugins/Map
+    Name: LocalCostmap
+    Enabled: false
+    Value: false
+    Alpha: 0.4
+    Color Scheme: costmap
+    Draw Behind: false
+    Use Timestamp: false
+    Topic:
+      Value: /local_costmap/costmap
+      Depth: 1
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Transient Local
+  Enabled: true
+  Global Options:
+    Background Color: 35; 35; 35
+    Fixed Frame: map
+    Frame Rate: 20
+  Name: root
+  Tools:
+  - Class: rviz_default_plugins/Interact
+    Hide Inactive Objects: true
+  - Class: rviz_default_plugins/MoveCamera
+  - Class: rviz_default_plugins/Select
+  - Class: rviz_default_plugins/FocusCamera
+  - Class: rviz_default_plugins/Measure
+    Line color: 128; 128; 0
+  - Class: nav2_rviz_plugins/GoalTool
+  Transformation:
+    Current:
+      Class: rviz_default_plugins/TF
+  Value: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 20
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.05999999865889549
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: -0.35
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.05000000074505806
+      Invert Z Axis: false
+      Name: Current View
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 1.45
+      Target Frame: <Fixed Frame>
+      Value: Orbit (rviz_default_plugins)
+      Yaw: -1.57
+    Saved: null
+Window Geometry:
+  Width: 1453
+  Height: 846
+  Hide Left Dock: false
+  Hide Right Dock: false

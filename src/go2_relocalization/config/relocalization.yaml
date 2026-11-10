@@ -1,0 +1,60 @@
+relocalization:
+  ros__parameters:
+    # Independent observation mode: never competes with the current map->odom TF.
+    publish_tf: false
+    cloud_topic: /cloud_registered_body
+    odometry_topic: /Odometry
+    map_frame: map
+    odom_frame: odom
+    body_frame: body
+    # Process recent scans at up to 5 Hz; use lightweight tracking between
+    # full global checks. Recheck interval starts at global job completion,
+    # so slow global jobs cannot immediately monopolize the next scan. Start
+    # sooner if the recent full-cycle cost would consume the 12 s verification
+    # deadline; this never retimestamps old evidence as a current scan.
+    processing_interval: 0.2
+    global_check_interval: 1.0
+    max_pose_age: 0.05
+    max_input_age: 3.0
+    tracking_timeout: 3.0
+    confirmation_timeout: 3.0
+    # Old global proposals are initialization only. Valid poses still require
+    # a NEW scan within max_input_age and all-candidate fresh verification.
+    max_global_proposal_age: 8.0
+    # Never keep locally tracking indefinitely without a new global check.
+    max_global_verification_age: 12.0
+    # NX observed a ~3.94 s global job and later ~5 s jobs. During established tracking only,
+    # allow that compute/queue age; published poses still match a current scan
+    # and global validity still uses the ORIGINAL global measurement stamp.
+    max_global_result_age: 6.0
+    confirmation_frames: 3
+    confirmation_interval: 0.2
+    confirmation_translation: 0.30
+    confirmation_rotation: 0.15
+    max_tracking_translation: 0.75
+    max_tracking_rotation: 0.35
+    registration.voxel_size: 0.2
+    registration.max_range: 20.0
+    registration.top_k: 12
+    registration.ring_count: 20
+    registration.sector_count: 60
+    registration.descriptor_height_offset: 2.0
+    registration.max_correspondence_distance: 1.0
+    registration.max_iterations: 40
+    registration.min_points: 100
+    registration.evaluation_distance: 0.4
+    registration.min_overlap: 0.6
+    registration.max_rmse: 0.25
+    # Initial conservative gate found necessary in synthetic shared-wall tests.
+    # No real tunnel calibration has been performed.
+    registration.min_quality_score: 0.70
+    registration.ambiguity_distance: 2.0
+    registration.ambiguity_yaw: 0.6
+    registration.min_score_gap: 0.04
+    registration.min_observability_ratio: 0.01
+    registration.normal_radius: 0.8
+    registration.min_normal_neighbors: 8
+    registration.max_normal_curvature: 0.08
+    registration.min_normal_samples: 30
+    registration.cache_registration_features: true
+    registration.candidate_threads: 1

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>go2_odom_bridge</name>
+  <version>0.1.0</version>
+  <description>Read Go2 SportModeState and publish body linear velocity for an EKF.</description>
+  <maintainer email="zyh@todo.todo">zyh</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+  <exec_depend>builtin_interfaces</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>rosbag2_py</exec_depend>
+  <exec_depend>unitree_go</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <test_depend>ament_pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

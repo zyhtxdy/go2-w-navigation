@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CycloneDDS>
+  <Domain Id="any">
+    <General>
+      <!-- Keep the verified Unitree sensor connection on the robot LAN. -->
+      <Interfaces>
+        <NetworkInterface name="eth0"/>
+      </Interfaces>
+      <AllowMulticast>true</AllowMulticast>
+    </General>
+    <Discovery>
+      <Peers>
+        <!-- Laptop Wi-Fi address; update if the laptop address changes. -->
+        <Peer Address="10.56.60.21"/>
+      </Peers>
+    </Discovery>
+  </Domain>
+</CycloneDDS>

@@ -1,0 +1,69 @@
+# 禾赛 XT16，配合官方 HesaiLidar_ROS_2.0 驱动。
+# IMU 使用 go2_imu_bridge 从 /lowstate 提取的本体 IMU，输出 /go2/imu。
+# 桥接目前使用接收时间；它不代表与 XT16 的严格采样时间同步。
+# 安装平移采用用户提供的参考值；旋转为用户指定的 +90 度试验值，尚未实测确认。
+# 来源及方向见 config/calibration/README.md。时间同步仍须单独校验。
+/**:
+  ros__parameters:
+    feature_extract_enable: false
+    point_filter_num: 3
+    max_iteration: 3
+    filter_size_surf: 0.5
+    filter_size_map: 0.5
+    cube_side_length: 1000.0
+    runtime_pos_log_enable: false
+    map_file_path: "./xt16_map.pcd"
+
+    common:
+      lid_topic: /hesai/points
+      imu_topic: /go2/imu  # sensor_msgs/msg/Imu；frame_id 为 go2_imu。
+      time_sync_en: false
+      time_offset_lidar_to_imu: 0.0  # 已标定的时间偏移，不能用来掩盖时钟漂移。
+
+    preprocess:
+      lidar_type: 5  # 本工作空间新增 HESAI_XT16 分支，直接读取 timestamp。
+      scan_line: 16
+      scan_rate: 10  # 起始值；按真实转速调整（600 rpm = 10 Hz）。
+      timestamp_unit: 0  # 禾赛 timestamp 是秒，解析时转换成逐点相对毫秒。
+      blind: 0.38  # 初始近距过滤值；按机身遮挡情况调整。
+
+    mapping:
+      acc_cov: 0.1
+      gyr_cov: 0.1
+      b_acc_cov: 0.0001
+      b_gyr_cov: 0.0001
+      min_effective_points: 10
+      max_lidar_position_correction: 1.0
+      max_velocity: 5.0
+      max_pose_translation_rate: 4.0
+      max_pose_rotation_rate: 4.0
+      pose_translation_tolerance: 0.05
+      pose_rotation_tolerance: 0.15
+      max_consecutive_imu_only_scans: 5
+      fov_degree: 360.0
+      det_range: 100.0
+      extrinsic_est_en: false
+      # T_IMU_LIDAR: p_IMU = R_IMU_LIDAR * p_LIDAR + t_IMU_LIDAR。
+      # 资料明确以内部 IMU 中心为参考；不再减去 base->IMU 的位移。
+      # 2026-10-09 用户要求试验绕本体 +Z 轴 +90 度（右手方向）。
+      # 该候选旋转把雷达 +X 转到 IMU +Y，雷达 +Y 转到 IMU -X。
+      # 尚未通过当前 Go2W 实测确认；不是已标定外参。
+      extrinsic_T: [0.1710, 0.0, 0.0908]
+      extrinsic_R: [0.0, -1.0, 0.0,
+                    1.0,  0.0, 0.0,
+                    0.0, 0.0, 1.0]
+
+    publish:
+      path_en: false
+      effect_map_en: false
+      map_en: false
+      map_interval: 1.0
+      scan_publish_en: true
+      scan_interval: 1.0
+      dense_publish_en: true
+      visualization_point_stride: 2
+      scan_bodyframe_pub_en: true
+
+    pcd_save:
+      pcd_save_en: false
+      interval: -1

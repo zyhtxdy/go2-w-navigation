@@ -1,0 +1,31 @@
+[INFO] [1792565759.187817670] [rviz2]: Stereo is NOT SUPPORTED
+[INFO] [1792565759.187940451] [rviz2]: OpenGl version: 4.6 (GLSL 4.6)
+[INFO] [1792565759.203255092] [rviz2]: Stereo is NOT SUPPORTED
+[INFO] [1792565769.717009790] [rviz]: Message Filter dropping message: frame 'odom' at time 1792566097.403 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[INFO] [1792565776.705138161] [rviz2]: Setting goal pose: Frame:map, Position(1.45606, -0.703491, 0), Orientation(0, 0, -0.383017, 0.923741) = Angle: -0.786121
+[INFO] [1792565796.011932696] [rviz2]: Setting goal pose: Frame:map, Position(4.51077, -0.388963, 0), Orientation(0, 0, -0.0278168, 0.999613) = Angle: -0.0556408
+[INFO] [1792565802.080403582] [rviz2]: Setting goal pose: Frame:map, Position(3.64357, -0.388908, 0), Orientation(0, 0, -0.0406084, 0.999175) = Angle: -0.0812391
+[INFO] [1792565816.186597309] [rviz2]: Setting goal pose: Frame:map, Position(4.51089, -0.159699, 0), Orientation(0, 0, -0.256663, 0.966501) = Angle: -0.519135
+[INFO] [1792565853.120285253] [rviz2]: Setting goal pose: Frame:map, Position(4.70184, -0.419987, 0), Orientation(0, 0, 0.999177, 0.0405729) = Angle: 3.06042
+[INFO] [1792565871.051498746] [rviz2]: Setting goal pose: Frame:map, Position(3.14239, -0.298739, 0), Orientation(0, 0, 0.999712, 0.0239909) = Angle: 3.09361
+[INFO] [1792565901.697807083] [rviz2]: Setting goal pose: Frame:map, Position(3.2062, -0.361246, 0), Orientation(0, 0, 0.999857, 0.0168944) = Angle: 3.1078
+[INFO] [1792565914.628298929] [rviz2]: Setting goal pose: Frame:map, Position(2.44672, -0.396723, 0), Orientation(0, 0, 0.999738, 0.0229004) = Angle: 3.09579
+[INFO] [1792565924.914975478] [rviz2]: Setting goal pose: Frame:map, Position(4.15712, -0.392868, 0), Orientation(0, 0, -0.0562223, 0.998418) = Angle: -0.112504
+[INFO] [1792565934.368642317] [rviz2]: Setting goal pose: Frame:map, Position(4.78317, -0.484039, 0), Orientation(0, 0, -0.0214812, 0.999769) = Angle: -0.0429658
+[INFO] [1792565938.770637886] [rviz2]: Setting goal pose: Frame:map, Position(2.99253, -0.378234, 0), Orientation(0, 0, -0.0405782, 0.999176) = Angle: -0.0811787
+[INFO] [1792565945.599818234] [rviz2]: Setting goal pose: Frame:map, Position(3.8496, -0.356355, 0), Orientation(0, 0, 0.00529715, 0.999986) = Angle: 0.0105943
+[INFO] [1792565949.422004520] [rviz2]: Setting goal pose: Frame:map, Position(2.51109, -0.659728, 0), Orientation(0, 0, -0.70597, 0.708242) = Angle: -1.56758
+[INFO] [1792565975.282287380] [rviz2]: Setting goal pose: Frame:map, Position(3.80239, -0.444262, 0), Orientation(0, 0, 0.0340164, 0.999421) = Angle: 0.068046
+[INFO] [1792565979.675343424] [rviz2]: Setting goal pose: Frame:map, Position(2.8842, -0.369388, 0), Orientation(0, 0, -0.00653582, 0.999979) = Angle: -0.0130717
+[INFO] [1792565992.548281895] [rviz2]: Setting goal pose: Frame:map, Position(4.66509, -0.445703, 0), Orientation(0, 0, 0.094306, 0.995543) = Angle: 0.188893
+[INFO] [1792566029.936944521] [rviz]: Message Filter dropping message: frame 'odom' at time 1792566366.593 for reason 'discarding message because the queue is full'
+[INFO] [1792566032.528441504] [rviz]: Message Filter dropping message: frame 'odom' at time 1792566369.192 for reason 'discarding message because the queue is full'
+[INFO] [1792566035.120745099] [rviz]: Message Filter dropping message: frame 'odom' at time 1792566371.789 for reason 'discarding message because the queue is full'
+[INFO] [1792566130.530449637] [rviz2]: Setting goal pose: Frame:map, Position(4.15533, -0.346813, 0), Orientation(0, 0, -0.0128622, 0.999917) = Angle: -0.0257251
+[INFO] [1792566158.060007387] [rviz2]: Setting goal pose: Frame:map, Position(2.79318, -0.293203, 0), Orientation(0, 0, 0.999177, 0.0405555) = Angle: 3.06046
+[INFO] [1792566182.240894646] [rviz2]: Setting goal pose: Frame:map, Position(4.41002, -0.327384, 0), Orientation(0, 0, 0.00465034, 0.999989) = Angle: 0.00930071
+[INFO] [1792566211.338019084] [rviz2]: Setting goal pose: Frame:map, Position(4.8311, 0.514683, 0), Orientation(0, 0, 0.692346, 0.721566) = Angle: 1.52947
+[INFO] [1792566246.440101240] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ERROR] [1792566246.440244555] [rviz_navigation_dialog_action_client]: Client interrupted while waiting for service to appear
+[ERROR] [1792566246.440244555] [rviz_navigation_dialog_action_client]: Client interrupted while waiting for service to appear
+[ERROR] [1792566246.440257755] [rviz_navigation_dialog_action_client]: Client interrupted while waiting for service to appear

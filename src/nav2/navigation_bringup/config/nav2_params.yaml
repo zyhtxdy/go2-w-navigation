@@ -1,0 +1,481 @@
+bt_navigator:
+  ros__parameters:
+    use_sim_time: false
+    global_frame: map
+    robot_base_frame: base_link
+    odom_topic: /odom
+    # bt_loop_duration: 10
+    # default_server_timeout: 20
+    # NX 同时运行 FAST-LIO、地形处理和控制器时，放宽行为树客户端响应时间。
+    bt_loop_duration: 50
+    # default_server_timeout: 1000
+    # 给可靠 action/service 的确认与重传留出余量，避免误取消 FollowPath。
+    default_server_timeout: 5000
+    wait_for_service_timeout: 1000
+    # 启动文件会把该占位值改写为本功能包安装目录中的无 Spin 真车行为树。
+    default_nav_to_pose_bt_xml: ""
+    default_nav_through_poses_bt_xml: ""
+    # 指定自定义三维路径有效性条件时，必须同时保留Nav2内置BT节点库。
+    plugin_lib_names:
+      - nav2_compute_path_to_pose_action_bt_node
+      - nav2_compute_path_through_poses_action_bt_node
+      - nav2_smooth_path_action_bt_node
+      - nav2_follow_path_action_bt_node
+      - nav2_spin_action_bt_node
+      - nav2_wait_action_bt_node
+      - nav2_assisted_teleop_action_bt_node
+      - nav2_back_up_action_bt_node
+      - nav2_drive_on_heading_bt_node
+      - nav2_clear_costmap_service_bt_node
+      - nav2_is_stuck_condition_bt_node
+      - nav2_goal_reached_condition_bt_node
+      - nav2_goal_updated_condition_bt_node
+      - nav2_globally_updated_goal_condition_bt_node
+      - nav2_is_path_valid_condition_bt_node
+      - nav2_initial_pose_received_condition_bt_node
+      - nav2_reinitialize_global_localization_service_bt_node
+      - nav2_rate_controller_bt_node
+      - nav2_distance_controller_bt_node
+      - nav2_speed_controller_bt_node
+      - nav2_truncate_path_action_bt_node
+      - nav2_truncate_path_local_action_bt_node
+      - nav2_goal_updater_node_bt_node
+      - nav2_recovery_node_bt_node
+      - nav2_pipeline_sequence_bt_node
+      - nav2_round_robin_node_bt_node
+      - nav2_transform_available_condition_bt_node
+      - nav2_time_expired_condition_bt_node
+      - nav2_path_expiring_timer_condition
+      - nav2_distance_traveled_condition_bt_node
+      - nav2_single_trigger_bt_node
+      - nav2_goal_updated_controller_bt_node
+      - nav2_is_battery_low_condition_bt_node
+      - nav2_navigate_through_poses_action_bt_node
+      - nav2_navigate_to_pose_action_bt_node
+      - nav2_remove_passed_goals_action_bt_node
+      - nav2_planner_selector_bt_node
+      - nav2_controller_selector_bt_node
+      - nav2_goal_checker_selector_bt_node
+      - nav2_controller_cancel_bt_node
+      - nav2_path_longer_on_approach_bt_node
+      - nav2_wait_cancel_bt_node
+      - nav2_spin_cancel_bt_node
+      - nav2_back_up_cancel_bt_node
+      - nav2_assisted_teleop_cancel_bt_node
+      - nav2_drive_on_heading_cancel_bt_node
+      - nav2_is_battery_charging_condition_bt_node
+      - is_terrain_path_valid_condition_bt_node
+    navigators: ["navigate_to_pose", "navigate_through_poses"]
+    navigate_to_pose:
+      plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
+    navigate_through_poses:
+      plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+
+controller_server:
+  ros__parameters:
+    use_sim_time: false
+    # controller_frequency: 10.0
+    controller_frequency: 20.0
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.001
+    min_theta_velocity_threshold: 0.001
+    failure_tolerance: 0.3
+    progress_checker_plugins: ["progress_checker"]
+    goal_checker_plugins: ["goal_checker"]
+    controller_plugins: ["FollowPath"]
+
+    progress_checker:
+      # plugin: "nav2_controller::SimpleProgressChecker"
+      # required_movement_radius: 0.3
+      # PoseProgressChecker 同时认可平移和转向，避免正常原地掉头被误判为卡住。
+      plugin: "nav2_controller::PoseProgressChecker"
+      required_movement_radius: 0.05
+      required_movement_angle: 0.20
+      movement_time_allowance: 15.0
+
+    goal_checker:
+      # plugin: "nav2_controller::SimpleGoalChecker"
+      # xy_goal_tolerance: 0.25
+      # yaw_goal_tolerance: 0.35
+      # 旧设置只检查位置，不检查目标姿态。
+      # plugin: "nav2_controller::PositionGoalChecker"
+      plugin: "nav2_controller::SimpleGoalChecker"
+      # xy_goal_tolerance: 0.18
+      xy_goal_tolerance: 0.22
+      # 允许最终朝向误差 30 度。
+      yaw_goal_tolerance: 0.523599
+      stateful: true
+
+    FollowPath:
+      # plugin: "dwb_core::DWBLocalPlanner"
+      plugin: "nav2_rotation_shim_controller::RotationShimController"
+      primary_controller: "dwb_core::DWBLocalPlanner"
+      angular_dist_threshold: 0.785
+      # forward_sampling_distance: 0.5
+      # 短路径也允许 Rotation Shim 接管近场侧后方目标。
+      forward_sampling_distance: 0.15
+      rotate_to_heading_angular_vel: 0.25
+      max_angular_accel: 0.60
+      simulate_ahead_time: 1.0
+      # rotate_to_goal_heading: false
+      # 到达位置后由 Rotation Shim 纯旋转对齐目标姿态。
+      rotate_to_goal_heading: true
+      # closed_loop: true
+      # 真车低速存在底盘死区；闭环时测得角速度一直为 0，会让 Shim 每周期
+      # 都被加速度限制在首个速度台阶，无法升到有效掉头速度。
+      closed_loop: false
+      debug_trajectory_details: false
+      # min_vel_x: 0.0
+      min_vel_x: 0.0
+      min_vel_y: 0.0
+      max_vel_x: 0.20
+      max_vel_y: 0.0
+      max_vel_theta: 0.35
+      # min_speed_xy: 0.05
+      # 允许末端零平移速度，防止到点后为了满足最低速度而继续画圈。
+      min_speed_xy: 0.0
+      max_speed_xy: 0.20
+      min_speed_theta: 0.0
+      acc_lim_x: 0.30
+      acc_lim_y: 0.0
+      acc_lim_theta: 0.60
+      decel_lim_x: -0.50
+      decel_lim_y: 0.0
+      decel_lim_theta: -0.60
+      vx_samples: 12
+      vy_samples: 1
+      vtheta_samples: 16
+      sim_time: 1.5
+      linear_granularity: 0.05
+      angular_granularity: 0.025
+      transform_tolerance: 0.3
+      # xy_goal_tolerance: 0.18
+      xy_goal_tolerance: 0.22
+      trans_stopped_velocity: 0.05
+      short_circuit_trajectory_evaluation: true
+      stateful: true
+      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      BaseObstacle.scale: 0.02
+      PathAlign.scale: 24.0
+      PathAlign.forward_point_distance: 0.25
+      GoalAlign.scale: 18.0
+      GoalAlign.forward_point_distance: 0.25
+      PathDist.scale: 24.0
+      GoalDist.scale: 18.0
+      RotateToGoal.scale: 24.0
+      RotateToGoal.slowing_factor: 5.0
+      RotateToGoal.lookahead_time: -1.0
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      use_sim_time: false
+      # update_frequency: 5.0
+      # publish_frequency: 2.0
+      update_frequency: 10.0
+      publish_frequency: 5.0
+      global_frame: odom
+      robot_base_frame: base_link
+      transform_tolerance: 0.3
+      rolling_window: true
+      width: 4
+      height: 4
+      resolution: 0.05
+      # Go2W 初始规划包络 0.80 x 0.50 m（含余量，非实测轮廓）。
+      footprint: "[[0.40, 0.25], [0.40, -0.25], [-0.40, -0.25], [-0.40, 0.25]]"
+      plugins: ["obstacle_layer", "inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: true
+        # 原始二维雷达配置保留；terrain 节点异常时可切回 /scan。
+        # observation_sources: scan
+        # scan:
+        #   topic: /scan
+        #   max_obstacle_height: 2.0
+        #   clearing: true
+        #   marking: true
+        #   data_type: "LaserScan"
+        #   raytrace_max_range: 8.0
+        #   raytrace_min_range: 0.4
+        #   obstacle_max_range: 6.0
+        #   obstacle_min_range: 0.4
+        observation_sources: terrain_obstacles terrain_clear
+        terrain_obstacles:
+          topic: /terrain/obstacles
+          data_type: "PointCloud2"
+          clearing: false
+          marking: true
+          min_obstacle_height: 0.0
+          max_obstacle_height: 2.0
+          obstacle_max_range: 6.0
+          obstacle_min_range: 0.4
+          observation_persistence: 0.0
+          expected_update_rate: 0.0
+        terrain_clear:
+          topic: /terrain/clear_scan
+          data_type: "LaserScan"
+          clearing: true
+          marking: false
+          inf_is_valid: true
+          raytrace_max_range: 8.0
+          raytrace_min_range: 0.4
+          observation_persistence: 0.0
+          expected_update_rate: 0.0
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 4.0
+        inflation_radius: 0.50
+      always_send_full_costmap: true
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      use_sim_time: false
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_link
+      transform_tolerance: 0.3
+      # Go2W 初始规划包络 0.80 x 0.50 m（含余量，非实测轮廓）。
+      footprint: "[[0.40, 0.25], [0.40, -0.25], [-0.40, -0.25], [-0.40, 0.25]]"
+      resolution: 0.05
+      # 原二维全局地图配置保留；切回 NavFn 或 /map 时取消注释。
+      # track_unknown_space: true
+      # plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      # static_layer:
+      #   plugin: "nav2_costmap_2d::StaticLayer"
+      #   map_subscribe_transient_local: true
+      # obstacle_layer:
+      #   plugin: "nav2_costmap_2d::ObstacleLayer"
+      #   enabled: true
+      #   observation_sources: scan
+      #   scan:
+      #     topic: /scan
+      #     max_obstacle_height: 2.0
+      #     clearing: true
+      #     marking: true
+      #     data_type: "LaserScan"
+      #     raytrace_max_range: 8.0
+      #     raytrace_min_range: 0.4
+      #     obstacle_max_range: 6.0
+      #     obstacle_min_range: 0.4
+      # inflation_layer:
+      #   plugin: "nav2_costmap_2d::InflationLayer"
+      #   cost_scaling_factor: 4.0
+      #   inflation_radius: 0.35
+
+      # 3D A* 使用自己的点云体素地图；Nav2 仍要求创建 GlobalCostmap。
+      # 用跟随机器人移动的空窗口提供合法边界，避免等待不存在的 /map。
+      rolling_window: true
+      width: 50
+      height: 50
+      track_unknown_space: false
+      # 原占位层会在 clear global_costmap 后使 Costmap 长时间保持非 current，
+      # Planner Server 随之卡在 waitForCostmap()，无法调用 3D A*。
+      # plugins: ["placeholder_inflation_layer"]
+      # placeholder_inflation_layer:
+      #   plugin: "nav2_costmap_2d::InflationLayer"
+      #   cost_scaling_factor: 4.0
+      #   inflation_radius: 0.35
+      # ROS 2 Humble 无法从 YAML 推断空数组的参数类型，因此不能使用 plugins: []。
+      # plugins: []
+      # 3D A* 不读取二维 Master Costmap；该 no-op 层不写入代价，并在清图后
+      # 仍保持 current，避免 Planner Server 卡在 waitForCostmap()。
+      plugins: ["always_current_layer"]
+      always_current_layer:
+        plugin: "astar_3d_planner::AlwaysCurrentLayer"
+      always_send_full_costmap: true
+
+planner_server:
+  ros__parameters:
+    use_sim_time: false
+    # 原 NavFn 配置保留，切回二维规划器时取消下面这些注释即可。
+    # expected_planner_frequency: 5.0
+    # planner_plugins: ["GridBased"]
+    # GridBased:
+    #   plugin: "nav2_navfn_planner/NavfnPlanner"
+    #   tolerance: 0.5
+    #   use_astar: false
+    #   allow_unknown: true
+
+    # 三维点云地图的搜索开销高于二维 NavFn，先按 1 Hz 期望频率运行。
+    expected_planner_frequency: 1.0
+    # planner_plugins: ["Astar3D"]
+    # Astar3D:
+    # Nav2 Humble 默认行为树通过 planner_id="GridBased" 请求全局规划器。
+    # 这里只调整插件实例 ID；实际加载的仍然是下面的三维 A* 插件。
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "astar_3d_planner/Astar3DPlanner"
+      # cloud_topic: /cloud_registered
+      # 老版本把完整点云同时当地面和障碍，桌面/墙面也可能成为错误支撑层。
+      support_topic: /terrain/support
+      obstacle_topic: /terrain/obstacles_global
+      # A*安全折线简化后按5cm重新采样，给局部控制器提供连续参考点。
+      path_pose_spacing: 0.05
+      # 相同目标且旧路径仍安全时沿用旧路线，只裁掉机器人已经走过的部分。
+      reuse_previous_path: true
+      # 偏离旧路线超过0.75m才放弃缓存并重新执行A*搜索。
+      # path_reuse_start_tolerance: 0.75
+      # 目标外或横向偏离超过25cm时重新规划，禁止宽松匹配到缓存终点。
+      path_reuse_start_tolerance: 0.25
+      # 旧设置 path_reuse_anchor_behind: 0.30 会让 Rotation Shim 的前视点落在车后。
+      # 路径进度仍然只允许向前，但复用路径从离机器人最近的前向进度开始。
+      # path_reuse_anchor_behind: 0.30
+      path_reuse_anchor_behind: 0.0
+      # 同一目标刚刚有效、旧路径前段仍安全时，容忍终点格短时间的地形障碍误报。
+      # 只忽略缓存路径最后0.4m的全局目标格判断；局部代价地图仍处理真实近场障碍。
+      cached_goal_obstacle_grace_period: 5.0
+      cached_goal_obstacle_ignore_radius: 0.4
+      # 行为树每0.5秒检查一次剩余路径；偏离原路径0.75m也视为路径失效事件。
+      path_validity_service: /terrain/is_path_valid
+      # 旧值0.75m会在车已经明显离开当前路径时仍匹配旧路径进度。
+      # path_validity_start_tolerance: 0.75
+      path_validity_start_tolerance: 0.30
+      # 行为树参考路线复查的有限局部绕行预算；严格服务和初始规划不豁免。
+      local_detour_max_deviation: 0.75
+      local_detour_progress_timeout: 4.0
+      local_detour_timeout: 12.0
+      # 旧值0.6m小于1.5m起点投影范围，盲区虚拟桥接会被误判为路径失效。
+      # path_validity_ignore_near_robot_radius: 0.6
+      # 雷达脚下盲区由local costmap/控制器负责，不用于触发全局改道。
+      path_validity_ignore_near_robot_radius: 1.6
+      # path_validity_min_blocked_length: 0.05
+      path_validity_min_blocked_length: 0.25
+      # FAST-LIO 原始里程计保留 Z，用它辅助判断车辆当前所在楼层。
+      lio_odom_topic: /Odometry
+      use_lio_start_z: true
+      # /Odometry 的 Z 是所用 IMU 原点；地面高度偏置需按实际安装测量。
+      # IMU 离地高度依赖姿态；保留 -0.50 m 初值，需实测后替换。
+      # 可用 real_nav2.launch.py 的 lio_height_offset 参数覆盖。
+      lio_height_offset: -0.50
+      # 普通 RViz 2D Goal 的 Z 恒为 0，此时自动投影到目标 XY 附近的地面层。
+      # 当上下层在 XY 上重叠时，应给目标 PoseStamped 显式填写楼层 Z。
+      goal_z_zero_is_unspecified: true
+      resolution: 0.1
+      inflate_radius: 0.48
+      cost_inflate_cells: 2
+      support_radius: 0.15
+      support_merge_height: 0.15
+      # terrain 每次发布机器人周围5m的障碍快照；只刷新内部4.5m，避免边界抖动。
+      obstacle_update_radius: 4.5
+      # 可观测区域内连续3次未再次出现才清除，抑制单帧误检且不会永久残留。
+      obstacle_clear_after_updates: 3
+      point_stride: 1
+      heuristic_weight: 1.0
+      obstacle_cost_weight: 2.0
+      slope_cost_weight: 0.2
+      ground_gap_cost_weight: 0.1
+      # 搜索状态绑定在实际支撑面，不再通过26邻域体素dz模拟坡道。
+      # max_slope_deg: 50.0
+      max_slope_deg: 10.0
+      surface_connection_radius: 0.25
+      max_step_height: 0.08
+      ground_check_depth: 0.6
+      # Go2W 加装 XT16 的初始净空包络；0.75 m 为规划值，非实测。
+      robot_height: 0.75
+      planning_height_offset: 0.2
+      ground_gap_tolerance: 0.12
+      # 旧版起终点共用的投影范围已拆分，保留供回退时参考。
+      # projection_xy_radius: 1.5
+      # 雷达近处存在盲区，起点需寻找机器人周围第一圈可见地面。
+      start_projection_xy_radius: 1.5
+      # 同一地面层允许20cm高度噪声，再按目标方向选盲区外地面，避免左右跳变。
+      start_projection_height_tolerance: 0.2
+      start_projection_direction_weight: 2.0
+      # 精确终点没有支撑或被占用时，只允许在0.5m内移动到最近的安全地面。
+      # 路径终点就是该安全地面，不再强行追加到未知区域中的用户XY。
+      # 旧设置允许终点最多移动0.5m，超过0.22m到点容差后车辆会追逐另一个目标。
+      # goal_projection_xy_radius: 0.5
+      goal_projection_xy_radius: 0.2
+      projection_z_radius: 1.0
+      unspecified_goal_projection_z_radius: 10.0
+      max_search_nodes: 500000
+
+smoother_server:
+  ros__parameters:
+    use_sim_time: false
+    smoother_plugins: ["simple_smoother"]
+    simple_smoother:
+      plugin: "nav2_smoother::SimpleSmoother"
+      tolerance: 1.0e-10
+      max_its: 1000
+      do_refinement: true
+
+behavior_server:
+  ros__parameters:
+    use_sim_time: false
+    local_costmap_topic: local_costmap/costmap_raw
+    global_costmap_topic: global_costmap/costmap_raw
+    local_footprint_topic: local_costmap/published_footprint
+    global_footprint_topic: global_costmap/published_footprint
+    cycle_frequency: 10.0
+    # behavior_plugins: ["spin", "backup", "drive_on_heading", "wait"]
+    # spin:
+    #   plugin: "nav2_behaviors/Spin"
+    # 真车禁用 Spin 恢复，避免导航失败时反复原地旋转。
+    behavior_plugins: ["backup", "drive_on_heading", "wait"]
+    backup:
+      plugin: "nav2_behaviors/BackUp"
+    drive_on_heading:
+      plugin: "nav2_behaviors/DriveOnHeading"
+    wait:
+      plugin: "nav2_behaviors/Wait"
+    local_frame: odom
+    global_frame: map
+    robot_base_frame: base_link
+    transform_tolerance: 0.3
+    simulate_ahead_time: 2.0
+    max_rotational_vel: 0.35
+    min_rotational_vel: 0.10
+    rotational_acc_lim: 0.60
+
+waypoint_follower:
+  ros__parameters:
+    use_sim_time: false
+    loop_rate: 20
+    stop_on_failure: false
+    waypoint_task_executor_plugin: "wait_at_waypoint"
+    wait_at_waypoint:
+      plugin: "nav2_waypoint_follower::WaitAtWaypoint"
+      enabled: true
+      waypoint_pause_duration: 200
+
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: false
+    smoothing_frequency: 20.0
+    scale_velocities: false
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.20, 0.0, 0.35]
+    min_velocity: [0.0, 0.0, -0.35]
+    max_accel: [0.30, 0.0, 0.60]
+    max_decel: [-0.50, 0.0, -0.60]
+    odom_topic: /odom
+    odom_duration: 0.2
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 0.20
+
+bt_navigator_rclcpp_node:
+  ros__parameters:
+    use_sim_time: false
+
+controller_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: false
+
+planner_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: false
+
+smoother_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: false
+
+behavior_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: false
+
+waypoint_follower_rclcpp_node:
+  ros__parameters:
+    use_sim_time: false

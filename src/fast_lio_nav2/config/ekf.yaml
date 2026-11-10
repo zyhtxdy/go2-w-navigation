@@ -1,0 +1,86 @@
+/**:
+  ros__parameters:
+    frequency: 30.0
+    sensor_timeout: 0.2
+    two_d_mode: true
+    transform_time_offset: 0.0
+    transform_timeout: 0.0
+    print_diagnostics: true
+    debug: false
+
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_link
+    world_frame: odom
+
+    publish_tf: true
+    publish_acceleration: false
+    reset_on_time_jump: true
+    # LIO is computed after the high-rate IMU/velocity samples, but retains
+    # the scan-end measurement stamp. Rewind to that stamp, then replay newer
+    # measurements; correcting only the current state can reject good LIO
+    # pose updates and leave this filter integrating velocity/gyro alone.
+    smooth_lagged_data: true
+    history_length: 1.0
+    permit_corrected_publication: false
+    dynamic_process_noise_covariance: true
+
+    # FAST-LIO supplies the drift-bounded planar pose after body->base_link
+    # calibration.  Its twist is intentionally ignored.
+    odom0: /lio/odom_base
+    odom0_config: [
+      true,  true,  false,
+      false, false, true,
+      false, false, false,
+      false, false, false,
+      false, false, false
+    ]
+    odom0_queue_size: 10
+    odom0_nodelay: true
+    odom0_differential: false
+    odom0_relative: false
+    odom0_pose_rejection_threshold: 5.0
+
+    # Go2 SportModeState supplies body-frame planar velocity through the
+    # read-only bridge. This is a robot state estimate, not wheel encoder data.
+    # Launch supplies base_link -> go2_body using the official Go2W simulator's
+    # IMU reference point by default. This is nominal, NOT verified on hardware.
+    # Override sportstate_reference_point after independent motion verification.
+    # Position, orientation and yaw_speed from SportModeState are NOT fused.
+    # This estimate and FAST-LIO may share the same body IMU; independence is
+    # not established, and covariance must be tuned using recorded tests.
+    odom1: /go2/odom_raw
+    odom1_config: [
+      false, false, false,
+      false, false, false,
+      true,  true,  false,
+      false, false, false,
+      false, false, false
+    ]
+    odom1_queue_size: 20
+    odom1_nodelay: true
+    odom1_differential: false
+    odom1_relative: false
+
+    # Fuse only gyro yaw rate from the bias-corrected IMU.
+    # Orientation and linear acceleration are not fused.
+    imu0: /imu/corrected
+    imu0_config: [
+      false, false, false,
+      false, false, false,
+      false, false, false,
+      false, false, true,
+      false, false, false
+    ]
+    imu0_queue_size: 50
+    imu0_nodelay: true
+    imu0_differential: false
+    imu0_relative: false
+    imu0_remove_gravitational_acceleration: false
+    # A gyro innovation also contains real angular acceleration. The previous
+    # 3-sigma gate locked out changing yaw rates, then the joint LIO pose gate
+    # rejected the growing heading error. Use the normal gyro update without
+    # a prediction-innovation gate; input nodes still reject non-finite rates.
+    # Keep the independent LIO pose gate and adapter jump checks above.
+
+    use_control: false
