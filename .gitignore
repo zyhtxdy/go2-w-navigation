@@ -46,8 +46,8 @@ core.[0-9]*
 /src/FAST_LIO_ROS2/Log/*.png
 /src/FAST_LIO_ROS2/Log/*.pdf
 
-# Historical verification records are archived outside the repository.
-/docs/validation/
+# Local troubleshooting and progress notes stay on this machine.
+/docs/
 
 # Optional local credentials/configuration should not enter source control.
 .env

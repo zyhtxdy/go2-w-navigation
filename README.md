@@ -69,7 +69,7 @@ ros2 launch go2_offline_navigation offline_nav.launch.py \
 - [离线地图准备及导航](src/go2_offline_navigation/README.md)
 - [重定位模块](src/go2_relocalization/README.md)
 - [XT16 设置](src/FAST_LIO_ROS2/XT16_SETUP.md)
-- [NX 与笔记本网络](docs/NETWORK_SETUP.md)
+- [网络配置示例](config/network)
 
 网络 XML、雷达 IP 和部分文档保留开发设备示例，换电脑或设备时需核对。源码参数也不代表 NX 现场运行参数已经同步。
 
@@ -93,7 +93,7 @@ ros2 launch go2_offline_navigation offline_nav.launch.py \
 | 速度、转向与控制器 | [nav2_mppi_params.yaml](src/nav2/navigation_bringup/config/nav2_mppi_params.yaml) | 按 B2-W 响应调整 MPPI/平滑器速度及加减速度、采样范围、预测时域、Shim 阈值和转速，并核对膨胀层。约 1.1m 通道的通行能力取决于实际外廓和转向空间，不能仅通过缩小膨胀半径认定可通过。 |
 | 速度前馈补偿 | [go2_cmd_vel.yaml](src/driver/go2_cmd_vel_bridge/config/go2_cmd_vel.yaml) | 当前正向与角速度补偿来自 Go2W。迁移初期关闭 `forward_compensation`、`angular_compensation`，重新记录指令与速度响应后再拟合 B2-W 系数；EKF 反馈不等于外部测速真值。 |
 | EKF 和输入时效 | [ekf.yaml](src/fast_lio_nav2/config/ekf.yaml)、桥接和定位配置 | 保留明确的观测选择，重新核对测量延迟、噪声与协方差、静止初始化和处理负载；接收时间戳不能证明雷达/IMU 硬件同步。 |
-| 网络与算力 | [config/network](config/network)、[NETWORK_SETUP.md](docs/NETWORK_SETUP.md) | 替换实际网卡、设备地址、DDS Peer 和 ROS 域，核对容器网络；在 B2-W 实际计算设备上检查完整链路负载，不能照搬现有 NX 的耗时预算。 |
+| 网络与算力 | [config/network](config/network) | 替换实际网卡、设备地址、DDS Peer 和 ROS 域，核对容器网络；在 B2-W 实际计算设备上检查完整链路负载，不能照搬现有 NX 的耗时预算。 |
 
 已有包名及 `/go2/...` 工程话题可以暂时保留，但这些名称不证明接口已经兼容 B2-W。若要改名，需要一起修改订阅者、发布者、launch、TF 和回放配置，避免仅修改标签而未转换数据。
 
@@ -127,7 +127,7 @@ colcon test --executor sequential
 colcon test-result --verbose
 ```
 
-`validate_replay`、`replay_planning.launch.py` 等仍用于本机无真机调试，保留在对应包中。历史验证文档、一次性排查脚本、旧源码快照、日志及结果已移到工作空间外归档，见 [整理记录](docs/WORKSPACE_CLEANUP.md)。
+`validate_replay`、`replay_planning.launch.py` 等仍用于本机无真机调试，保留在对应包中。历史验证文档、一次性排查脚本、旧源码快照、日志及结果已移到工作空间外归档。`docs/` 中的现场排查与整理记录仅保留本机，不随仓库发布。
 
 `bags/`、`build/`、`install/`、`log/` 在本地保留，由 `.gitignore` 排除。`maps/` 默认忽略；当前已显式收录配套的 `lab_v1_database` 和 `lab_v1_navigation_guarded_20261026`，其余地图保留在本地。克隆代码后需要自行编译；录包及其他场地地图需另行准备。
 

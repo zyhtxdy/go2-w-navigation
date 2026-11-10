@@ -195,7 +195,7 @@ rviz2 -d /home/zyhtxdy/go2-w_ws/src/fast_lio_nav2/config/offline_navigation.rviz
 完整地图需要离线入口指定 `publish_known_map:=true`。固定点云本身位于 `map`，
 因此即使定位还未生成 `map→odom` 也能先显示；里程计与实时点云仍需要相应变换。
 `real_navigation.rviz` 是在线配置，没有这些离线地图显示项。
-本机与 NX 的 DDS 配置见 [网络说明](../../docs/NETWORK_SETUP.md)，GPU 默认启动设置不会替代 ROS 网络环境。
+本机与 NX 的 DDS 配置参考 [网络配置示例](../../config/network)，详细排查记录仅保留在本机 `docs/NETWORK_SETUP.md`。GPU 默认启动设置不会替代 ROS 网络环境。
 
 Fixed Frame 使用 map。添加以下显示：
 
