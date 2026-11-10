@@ -353,7 +353,8 @@ local_costmap:
           data_type: "LaserScan"
           clearing: true
           marking: false
-          inf_is_valid: true
+          # 缺测不是自由空间；只接受地形节点基于当前回波生成的有限清线。
+          inf_is_valid: false
           raytrace_max_range: 8.0
           raytrace_min_range: 0.4
           observation_persistence: 0.0

@@ -17,6 +17,8 @@ find_package(tf2_ros REQUIRED)
 add_library(terrain_analyzer
   src/terrain_analyzer.cpp
   src/terrain_hazard_stabilizer.cpp
+  src/near_obstacle_detector.cpp
+  src/evidence_clearing.cpp
 )
 target_compile_features(terrain_analyzer PUBLIC cxx_std_17)
 target_include_directories(terrain_analyzer PUBLIC
@@ -57,11 +59,19 @@ if(BUILD_TESTING)
   target_link_libraries(test_terrain_analyzer terrain_analyzer)
   ament_add_gtest(test_obstacle_observation_time test/test_obstacle_observation_time.cpp)
   target_link_libraries(test_obstacle_observation_time terrain_analyzer)
+  ament_add_gtest(test_near_obstacle_detector test/test_near_obstacle_detector.cpp)
+  target_link_libraries(test_near_obstacle_detector terrain_analyzer)
+  ament_add_gtest(test_evidence_clearing test/test_evidence_clearing.cpp)
+  target_link_libraries(test_evidence_clearing terrain_analyzer)
   ament_add_pytest_test(test_pose_waiting test/test_pose_waiting.py
     TIMEOUT 45
     ENV "TERRAIN_NODE_EXECUTABLE=$<TARGET_FILE:terrain_costmap_node>"
   )
   ament_add_pytest_test(test_obstacle_time_node test/test_obstacle_time_node.py
+    TIMEOUT 30
+    ENV "TERRAIN_NODE_EXECUTABLE=$<TARGET_FILE:terrain_costmap_node>"
+  )
+  ament_add_pytest_test(test_near_obstacle_node test/test_near_obstacle_node.py
     TIMEOUT 30
     ENV "TERRAIN_NODE_EXECUTABLE=$<TARGET_FILE:terrain_costmap_node>"
   )

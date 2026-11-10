@@ -50,6 +50,15 @@ terrain_costmap:
     # 机器人附近区域同时受雷达近距盲区和40cm地面拟合窗口影响。
     # 只抑制该范围内由拟合生成的虚拟危险格；真实离地障碍仍会正常发布。
     synthetic_obstacle_clearance_radius: 0.65
+    # 近场竖直结构无需地面拟合：当前帧补入local，并向全局实测障碍流补充。
+    # 全局保留物理XYZ、原观测时间及上述0.6秒期限；不生成支撑或修改固定地图。
+    # 以下检测范围的高度均相对base_link，非发布到全局后的物理Z。
+    near_obstacle_detection_enabled: true
+    near_obstacle_maximum_range: 1.20
+    near_obstacle_minimum_relative_z: -0.35
+    near_obstacle_maximum_relative_z: 0.40
+    # [min_x, max_x, min_y, max_y]，和当前Go2W矩形足迹对应；换底盘需重核。
+    near_obstacle_self_bounds: [-0.40, 0.40, -0.25, 0.25]
     # mixed全局障碍的实测确认只累计不同的原始雷达帧。
     # local costmap仍接收原2秒窗口内的完整即时危险分类。
     global_hazard_voxel_size: 0.20
@@ -59,6 +68,8 @@ terrain_costmap:
     scan_angle_increment_degrees: 0.50
     scan_range_minimum: 0.40
     scan_range_maximum: 8.0
+    # 仅向当前有实测回波的方向清除，端点留10cm；缺测输出NaN。
+    clearing_endpoint_margin: 0.10
     publish_terrain_map: true
     # terrain/support/mixed危险的发布周期；measured_global随每次处理刷新。
     terrain_publish_interval: 0.50

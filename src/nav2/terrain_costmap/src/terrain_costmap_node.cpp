@@ -1,5 +1,7 @@
 #include "terrain_costmap/terrain_analyzer.hpp"
 #include "terrain_costmap/terrain_hazard_stabilizer.hpp"
+#include "terrain_costmap/evidence_clearing.hpp"
+#include "terrain_costmap/near_obstacle_detector.hpp"
 
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <nav_msgs/msg/odometry.hpp>
@@ -170,6 +172,10 @@ public:
       declare_parameter("scan_angle_increment_degrees", 0.50) * M_PI / 180.0;
     scan_range_minimum_ = declare_parameter("scan_range_minimum", 0.40);
     scan_range_maximum_ = declare_parameter("scan_range_maximum", 8.0);
+    clearing_endpoint_margin_ = declare_parameter("clearing_endpoint_margin", 0.10);
+    if (!std::isfinite(clearing_endpoint_margin_) || clearing_endpoint_margin_ < 0.0) {
+      throw std::invalid_argument("clearing_endpoint_margin must be finite and nonnegative");
+    }
     publish_terrain_map_ = declare_parameter("publish_terrain_map", true);
     terrain_publish_interval_ =
       declare_parameter("terrain_publish_interval", 0.50);
@@ -204,6 +210,33 @@ public:
     analyzer_parameters.synthetic_obstacle_clearance_radius =
       declare_parameter("synthetic_obstacle_clearance_radius", 0.65);
     analyzer_ = std::make_unique<TerrainAnalyzer>(analyzer_parameters);
+
+    NearObstacleParameters near_parameters;
+    near_parameters.enabled = declare_parameter("near_obstacle_detection_enabled", false);
+    near_parameters.minimum_range = std::max(input_minimum_range_, scan_range_minimum_);
+    near_parameters.maximum_range = std::min({
+      declare_parameter("near_obstacle_maximum_range", 1.20),
+      input_maximum_range_, scan_range_maximum_});
+    near_parameters.minimum_relative_z =
+      declare_parameter("near_obstacle_minimum_relative_z", -0.35);
+    near_parameters.maximum_relative_z =
+      declare_parameter("near_obstacle_maximum_relative_z", 0.40);
+    const auto self_bounds = declare_parameter<std::vector<double>>(
+      "near_obstacle_self_bounds", std::vector<double>{-0.40, 0.40, -0.25, 0.25});
+    if (self_bounds.size() != 4) {
+      throw std::invalid_argument("near_obstacle_self_bounds requires [min_x, max_x, min_y, max_y]");
+    }
+    near_parameters.self_minimum_x = self_bounds[0];
+    near_parameters.self_maximum_x = self_bounds[1];
+    near_parameters.self_minimum_y = self_bounds[2];
+    near_parameters.self_maximum_y = self_bounds[3];
+    near_parameters.minimum_obstacle_height = analyzer_parameters.obstacle_minimum_height;
+    near_parameters.maximum_ground_slope = analyzer_parameters.maximum_slope;
+    near_parameters.minimum_cluster_points =
+      std::max(3, analyzer_parameters.minimum_obstacle_cluster_points);
+    if (near_parameters.enabled) {
+      near_obstacle_detector_ = std::make_unique<NearObstacleDetector>(near_parameters);
+    }
 
     HazardStabilizerParameters stabilizer_parameters;
     stabilizer_parameters.voxel_size =
@@ -285,6 +318,9 @@ private:
   {
     double stamp{0.0};
     std::vector<Point> points;
+    // Already detected from this scan alone, in odom with the ORIGINAL source
+    // time. Retain evidence for the measured window; never refit old near scans.
+    std::vector<TerrainPoint> near_obstacles;
   };
 
   void odometryCallback(const nav_msgs::msg::Odometry::SharedPtr message)
@@ -450,6 +486,11 @@ private:
 
     CloudFrame frame;
     frame.stamp = cloud_stamp;
+    // Keep current measured returns before terrain voxel/range/height filtering.
+    // Even an unclassified or too-close return must stop a clearing ray.
+    // The near detector performs its own bounded, base-frame self filtering.
+    std::vector<Point> current_returns_base;
+    current_returns_base.reserve(message->width * message->height);
     std::unordered_set<std::uint64_t> occupied_voxels;
     occupied_voxels.reserve(message->width * message->height / 2);
     try {
@@ -462,6 +503,8 @@ private:
         }
         const tf2::Vector3 point_body(*x, *y, *z);
         const tf2::Vector3 point_base = base_from_body * point_body;
+        current_returns_base.push_back(
+          {point_base.x(), point_base.y(), point_base.z(), cloud_stamp_ns});
         const double range = std::hypot(point_base.x(), point_base.y());
         if (range < input_minimum_range_ || range > input_maximum_range_ ||
           point_base.z() < input_minimum_relative_z_ ||
@@ -495,6 +538,22 @@ private:
       return;
     }
 
+    const tf2::Transform odom_from_base =
+      pose.odom_from_body * base_from_body.inverse();
+    const auto near_obstacles = near_obstacle_detector_ ?
+      near_obstacle_detector_->detect(current_returns_base) : std::vector<TerrainPoint>{};
+    frame.near_obstacles.reserve(near_obstacles.size());
+    for (const TerrainPoint & obstacle : near_obstacles) {
+      // Global collision checks require physical XYZ, not the relative-height
+      // Z used by the local marking cloud. Use this scan's FAST-LIO pose and
+      // static base/body transform, not a latest TF or the EKF pose.
+      const auto & point = obstacle.point;
+      const tf2::Vector3 world = odom_from_base * tf2::Vector3(point.x, point.y, point.z);
+      frame.near_obstacles.push_back(
+        {{world.x(), world.y(), world.z(), point.observation_stamp_ns},
+          obstacle.relative_height, false});
+    }
+
     history_.push_back(std::move(frame));
     while (!history_.empty() &&
       cloud_stamp - history_.front().stamp > history_decay_time_)
@@ -514,16 +573,19 @@ private:
 
     // Terrain and its near-vehicle confidence region must follow the chassis
     // rotation center, not the offset LiDAR/IMU body origin.
-    const tf2::Transform odom_from_base =
-      pose.odom_from_body * base_from_body.inverse();
     const tf2::Vector3 base_origin = odom_from_base.getOrigin();
     const auto analysis_start = std::chrono::steady_clock::now();
     const Analysis result =
       analyzer_->analyze(merged, base_origin.x(), base_origin.y());
     const double analysis_ms = std::chrono::duration<double, std::milli>(
       std::chrono::steady_clock::now() - analysis_start).count();
+    std::vector<TerrainPoint> measured_obstacles = result.measured_obstacles;
+    for (const CloudFrame & cloud : history_) {
+      measured_obstacles.insert(measured_obstacles.end(),
+        cloud.near_obstacles.begin(), cloud.near_obstacles.end());
+    }
     const auto fresh_measured = freshMeasuredObstacles(
-      result.measured_obstacles, cloud_stamp_ns,
+      measured_obstacles, cloud_stamp_ns,
       static_cast<std::int64_t>(std::llround(measured_obstacle_decay_time_ * 1e9)));
     const std::vector<TerrainPoint> stable_global_obstacles =
       hazard_stabilizer_->update(
@@ -553,8 +615,11 @@ private:
 
     const tf2::Transform body_from_odom =
       pose.odom_from_body.inverse();
+    // Local marking still uses only this scan's near detections. Global streams
+    // above also receive them, with physical XYZ and bounded original-time age.
+    // Neither branch creates support or modifies the fixed navigation map.
     std::vector<Point> obstacles_base;
-    obstacles_base.reserve(result.obstacles.size());
+    obstacles_base.reserve(result.obstacles.size() + near_obstacles.size());
     for (const TerrainPoint & obstacle : result.obstacles) {
       const Point & point = obstacle.point;
       const tf2::Vector3 point_body =
@@ -567,17 +632,22 @@ private:
           {point_base.x(), point_base.y(), obstacle.relative_height});
       }
     }
+    for (const TerrainPoint & obstacle : near_obstacles) {
+      obstacles_base.push_back(
+        {obstacle.point.x, obstacle.point.y, obstacle.relative_height,
+          obstacle.point.observation_stamp_ns});
+    }
 
     std_msgs::msg::Header base_header = message->header;
     base_header.frame_id = base_frame_;
     obstacle_publisher_->publish(makeCloud(obstacles_base, base_header));
     clearing_scan_publisher_->publish(
-      makeClearingScan(obstacles_base, base_header));
+      makeClearingScan(current_returns_base, obstacles_base, base_header));
 
     RCLCPP_INFO_THROTTLE(
       get_logger(), *get_clock(), 2000,
       "Terrain: frames=%zu points=%zu classified=%zu local_obstacles=%zu "
-      "measured=%zu fresh_measured=%zu measured_window=%.3f synthetic=%zu "
+      "near_obstacles=%zu measured=%zu fresh_measured=%zu measured_window=%.3f synthetic=%zu "
       "stable_global=%zu tracked=%zu "
       "near_synthetic_suppressed=%zu support=%zu analysis_ms=%.3f "
       "cells_observed=%zu cells_unobserved=%zu "
@@ -585,7 +655,7 @@ private:
       "reject_support=%zu reject_slope=%zu reject_rmse=%zu reject_step=%zu "
       "pose_wait_recovered=%zu pose_wait_expired=%zu",
       history_.size(), merged.size(), result.terrain.size(),
-      obstacles_base.size(), result.measured_obstacles.size(),
+      obstacles_base.size(), near_obstacles.size(), measured_obstacles.size(),
       fresh_measured.size(), measured_obstacle_decay_time_,
       result.synthetic_obstacles.size(), stable_global_obstacles.size(),
       hazard_stabilizer_->trackedVoxelCount(),
@@ -598,6 +668,7 @@ private:
   }
 
   sensor_msgs::msg::LaserScan makeClearingScan(
+    const std::vector<Point> & current_returns,
     const std::vector<Point> & obstacles,
     const std_msgs::msg::Header & header) const
   {
@@ -610,17 +681,14 @@ private:
     scan.range_max = scan_range_maximum_;
     const std::size_t bin_count = static_cast<std::size_t>(
       std::floor((scan.angle_max - scan.angle_min) / scan.angle_increment)) + 1;
-    scan.ranges.assign(bin_count, std::numeric_limits<float>::infinity());
-    for (const Point & point : obstacles) {
-      const double angle = std::atan2(point.y, point.x);
-      const double range = std::hypot(point.x, point.y);
-      const std::size_t index = std::min(
-        bin_count - 1,
-        static_cast<std::size_t>(
-          std::floor((angle - scan.angle_min) / scan.angle_increment)));
-      scan.ranges[index] = std::min(
-        scan.ranges[index], static_cast<float>(range));
-    }
+    EvidenceClearingParameters parameters;
+    parameters.range_min = scan.range_min;
+    parameters.range_max = scan.range_max;
+    parameters.angle_min = scan.angle_min;
+    parameters.angle_increment = scan.angle_increment;
+    parameters.bin_count = bin_count;
+    parameters.endpoint_margin = clearing_endpoint_margin_;
+    scan.ranges = makeEvidenceClearingRanges(current_returns, obstacles, parameters);
     return scan;
   }
 
@@ -651,6 +719,7 @@ private:
   double scan_angle_increment_{0.5 * M_PI / 180.0};
   double scan_range_minimum_{0.4};
   double scan_range_maximum_{8.0};
+  double clearing_endpoint_margin_{0.10};
   bool publish_terrain_map_{true};
   double terrain_publish_interval_{0.5};
   double last_terrain_publish_time_{-1.0};
@@ -662,6 +731,7 @@ private:
   double pose_history_duration_{2.0};
   std::deque<CloudFrame> history_;
   std::unique_ptr<TerrainAnalyzer> analyzer_;
+  std::unique_ptr<NearObstacleDetector> near_obstacle_detector_;
   std::unique_ptr<TerrainHazardStabilizer> hazard_stabilizer_;
   tf2_ros::Buffer tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
