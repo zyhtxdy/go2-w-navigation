@@ -41,7 +41,7 @@
 
 新的离线验证必须重新桥接原始状态，排除旧的 `/go2/odom_raw` 输出。
 改变 launch 参数不会改变包里已经算错的速度数据。详细依据见
-[融合修复记录](../../docs/validation/2026-10-13-fusion-diagnosis/README.md)。
+融合修复记录（历史附件已在本机归档）。
 
 ## 可追溯依据
 
@@ -121,4 +121,4 @@ ros2 launch fast_lio_nav2 odom_fusion.launch.py
 本次消息原始 stamp 全为零，因此保持 `timestamp_source=receive`。
 三路输入、基准点转换、EKF 和私有 TF 已做 30 秒静止测试（1 次，0 趟运动），
 融合输出约 30 Hz；移动速度的坐标和参考点仍待验证。
-详见 [EKF 检查记录](../../docs/validation/2026-10-09-ekf/README.md)。
+详见 EKF 检查记录（历史附件已在本机归档）。

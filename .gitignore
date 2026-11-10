@@ -46,13 +46,8 @@ core.[0-9]*
 /src/FAST_LIO_ROS2/Log/*.png
 /src/FAST_LIO_ROS2/Log/*.pdf
 
-# Historical reports are kept; raw results and one-off scripts are archived.
-/docs/validation/**
-!/docs/validation/**/
-!/docs/validation/**/*.md
-!/docs/validation/COLCON_IGNORE
-# Provenance for config/replay_planning_cases_lab_v1.yaml.
-!/docs/validation/2026-10-21-latest-navigation-failures/laptop_rviz2_21356_1792565758712.log
+# Historical verification records are archived outside the repository.
+/docs/validation/
 
 # Optional local credentials/configuration should not enter source control.
 .env

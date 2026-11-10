@@ -76,7 +76,7 @@ source install/setup.bash
 
 依赖已有 ROS2 Humble、PCL、Eigen，不下载另一套 FAST-LIO。
 2026-10-21 的后台搜索改进先在本机开发与回放验证；NX 仅做本人容器内编译和保存关键帧的离线配准基准，不启动机器狗。
-本次记录位于工作空间 `docs/validation/2026-10-21-relocalization-performance/`。
+本次原始记录已移到工作空间外的本机验证归档。
 
 ## 地图库怎么准备
 

@@ -2,7 +2,7 @@
 
 独立入口：`ros2 launch go2_offline_navigation offline_nav.launch.py`。
 原有在线建图导航命令和默认参数保持原行为，尚未合并模式开关。
-已做本机和 NX 隔离录包验证；各次改动的验证边界见工作空间 `docs/validation`，不代表已完成隧道导航验收。
+已做本机和 NX 隔离录包验证；各次改动的历史验证记录已移到本机归档，不代表已完成隧道导航验收。
 
 ## 链路和坐标
 
@@ -250,7 +250,7 @@ ros2 run go2_offline_navigation validate_replay \
   /home/zyhtxdy/go2-w_ws/bags/go2_inputs_20261010_094309 \
   /home/zyhtxdy/go2-w_ws/maps/lab_v1_database \
   /home/zyhtxdy/go2-w_ws/maps/lab_v1_navigation \
-  /home/zyhtxdy/go2-w_ws/docs/validation/新的评测目录 \
+  /home/zyhtxdy/go2-w_ws/validation/新的评测目录 \
   --domain 155 \
   --planning-cases /home/zyhtxdy/go2-w_ws/src/go2_offline_navigation/config/replay_planning_cases_lab_v1.yaml
 ```

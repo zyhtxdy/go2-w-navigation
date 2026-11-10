@@ -3,7 +3,7 @@ frame_id: map
 expected_map_id: 4003d94bb6f81f004c4b1354dcb5044d84b8efe59e79993f6e6c5ed63390e080
 checkpoints_s: [10.0, 30.0, 50.0]
 source:
-  path: docs/validation/2026-10-21-latest-navigation-failures/laptop_rviz2_21356_1792565758712.log
+  path: src/go2_offline_navigation/test/data/lab_v1_rviz_goals.txt
   description: >-
     Six original RViz map-frame goals, fixed before running this replay evaluation.
     Coordinates and yaw are copied from the cited historical log lines.

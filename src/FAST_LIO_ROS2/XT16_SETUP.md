@@ -255,4 +255,4 @@ source /work/zyh_ws/setup_static_test.bash
 ```
 
 这个脚本只加载环境，不启动节点。完整观察值、原时钟问题和测试范围见
-[静止建图测试记录](../../docs/validation/2026-10-09-static-mapping/README.md)。
+静止建图测试记录（历史附件已在本机归档）。

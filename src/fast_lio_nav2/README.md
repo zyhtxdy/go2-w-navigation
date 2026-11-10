@@ -54,7 +54,7 @@ FAST-LIO、里程计融合、地形处理和实际 3D A* 全局规划服务。
 保留；没有修改协方差、运动桥接、限速或加入 PID。
 
 受控迟到输入与真实录包的对照、结果和局限见
-[融合修复记录](../../docs/validation/2026-10-13-fusion-diagnosis/README.md)。
+融合修复记录（历史附件已在本机归档）。
 
 本机需安装规划和融合运行依赖；本次已安装缺少的 `nav2_planner` 和
 `robot_localization`。其他电脑可先安装：
@@ -84,7 +84,7 @@ rosbag 播放器只发布 `/hesai/points`、`/go2/imu`。
 
 离线默认参数是 `navigation_bringup/config/nav2_mppi_params.yaml` 同一源文件在本包安装时的副本，不需要为离线计算路径编译完整导航控制器。修改该源配置后，应重新编译本包；真机导航安装配置则重新编译 `navigation_bringup`。`params_file` 仍允许显式指定其他文件。
 
-`/planner/start_failure` 保存最近失败的 JSON，配套 MarkerArray 已加入 RViz 配置。来源及近场历史修复见 [规划器说明](../nav2/astar_3d_planner/README.md)，本轮结果见 [2026-10-14 本机记录](../../docs/validation/2026-10-14-start-diagnostics/README.md)。
+`/planner/start_failure` 保存最近失败的 JSON，配套 MarkerArray 已加入 RViz 配置。来源及近场历史修复见 [规划器说明](../nav2/astar_3d_planner/README.md)，本轮结果见 2026-10-14 本机记录（历史附件已在本机归档）。
 因此当前入口要求包里有原始 `/lf/sportmodestate`，只有旧桥接输出的包不能
 靠改变 launch 参数修正。`/lowstate` 继续保留用于单独检查 IMU 桥接。
 

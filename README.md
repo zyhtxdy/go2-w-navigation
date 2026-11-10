@@ -127,13 +127,13 @@ colcon test --executor sequential
 colcon test-result --verbose
 ```
 
-`validate_replay`、`replay_planning.launch.py` 等仍用于本机无真机调试，保留在对应包中。`docs/validation` 只保留历史文字记录；一次性排查脚本、旧源码快照、日志及结果已移出工作空间，见 [整理记录](docs/WORKSPACE_CLEANUP.md)。
+`validate_replay`、`replay_planning.launch.py` 等仍用于本机无真机调试，保留在对应包中。历史验证文档、一次性排查脚本、旧源码快照、日志及结果已移到工作空间外归档，见 [整理记录](docs/WORKSPACE_CLEANUP.md)。
 
-`bags/`、`maps/`、`build/`、`install/`、`log/` 在本地保留，由 `.gitignore` 排除。克隆代码后需要自行编译，并另行准备录包、定位数据库和导航地图。
+`bags/`、`build/`、`install/`、`log/` 在本地保留，由 `.gitignore` 排除。`maps/` 默认忽略；当前已显式收录配套的 `lab_v1_database` 和 `lab_v1_navigation_guarded_20261026`，其余地图保留在本地。克隆代码后需要自行编译；录包及其他场地地图需另行准备。
 
 ## 仓库整理
 
-当前仅准备本地 Git 仓库，未配置 GitHub 远程地址或推送。提交前可检查：
+提交源码和文档变更前可检查：
 
 ```bash
 git status --short

@@ -209,7 +209,7 @@ colcon test --packages-select terrain_costmap astar_3d_planner
 日志和 XML 报告。当前命令只运行保留的核心测试，不再运行这些场景。
 坡度、台阶、支撑缺口、碰撞及插件加载测试保留；规划算法没有因清理而修改。
 历史输入、结果及起点投影高度限制见
-[离线测试记录](../../../docs/validation/2026-10-10-offline-terrain-planning/README.md)。
+离线测试记录（历史附件已在本机归档）。
 ## 起点与搜索拒绝诊断
 
 规划失败时，`/planner/start_failure` 发布 JSON 文本，`/planner/start_failure_markers` 发布 RViz 标记。二者采用 Reliable、Transient Local、深度 1，保存最近一次状态，后来打开 RViz 也能看到。新规划请求及节点停用会清除旧标记；这些话题用于诊断，不触发运动或改变碰撞判断。
